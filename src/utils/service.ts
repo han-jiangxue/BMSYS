@@ -95,7 +95,7 @@ function createRequest(service: AxiosInstance) {
     const defaultConfig = {
       headers: {
         // 携带 Token
-        Authorization: token ? `Bearer ${token}` : undefined,
+        token: token ? token : undefined,
         "Content-Type": "application/json"
       },
       timeout: 12000,
