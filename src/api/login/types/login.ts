@@ -17,6 +17,6 @@ export type LoginCodeResponseData = CaptchaRes
 
 export type LoginRequestData = LoginParams
 
-export type LoginResponseData = ApiResponseData<{ token: string }>
+export type LoginResponseData = ApiResponseData<any>
 
 export type UserInfoResponseData = ApiResponseData<{ username: string; roles: string[] }>

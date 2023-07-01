@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue"
-import { Setting } from "@element-plus/icons-vue"
+import { ArrowLeft } from "@element-plus/icons-vue"
 
 const props = defineProps({
   buttonTop: {
@@ -15,8 +15,8 @@ const show = ref(false)
 
 <template>
   <div class="handle-button" @click="show = true">
-    <el-icon :size="24">
-      <Setting />
+    <el-icon :size="20">
+      <ArrowLeft />
     </el-icon>
   </div>
   <el-drawer v-model="show" size="300px" :with-header="false">
@@ -26,9 +26,9 @@ const show = ref(false)
 
 <style lang="scss" scoped>
 .handle-button {
-  width: 48px;
-  height: 48px;
-  background-color: var(--v3-rightpanel-button-bg-color);
+  width: 30px;
+  height: 30px;
+  // background-color: var(--v3-rightpanel-button-bg-color);
   position: fixed;
   top: v-bind(buttonTopCss);
   right: 0px;

@@ -12,7 +12,6 @@ NProgress.configure({ showSpinner: false })
 
 router.beforeEach(async (to, _from, next) => {
   NProgress.start()
-  console.log(to, _from, next, "hhh")
 
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
@@ -27,10 +26,11 @@ router.beforeEach(async (to, _from, next) => {
       if (userStore.roles.length === 0) {
         try {
           if (asyncRouteSettings.open) {
-            // 注意：角色必须是一个数组！ 例如: ['admin'] 或 ['developer', 'editor']
+            // 注意：角色必须是一个数组！ 例如: ['admin'] 或 ['user', 'super']
             await userStore.getInfo()
             const roles = userStore.roles
             // 根据角色生成可访问的 Routes（可访问路由 = 常驻路由 + 有访问权限的动态路由）
+
             permissionStore.setRoutes(roles)
           } else {
             // 没有开启动态路由功能，则启用默认角色
