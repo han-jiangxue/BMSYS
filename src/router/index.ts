@@ -8,6 +8,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: "/redirect",
     component: Layout,
     meta: {
+      // 默认 false，设置 true 的时候该路由不会在侧边栏出现
       hidden: true
     },
     children: [
@@ -50,39 +51,114 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: "Dashboard",
         meta: {
           title: "首页",
-          svgIcon: "dashboard",
+          elIcon: "House",
           affix: true
         }
       }
     ]
-  },
+  }
+  // {
+  //   path: "/link",
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: "https://xyt-wx.cumt.edu.cn/admin-home",
+  //       component: () => {},
+  //       name: "Link",
+  //       meta: {
+  //         title: "外链",
+  //         svgIcon: "link"
+  //       }
+  //     }
+  //   ]
+  // }
+]
+
+/**
+ * 动态路由
+ * 用来放置有权限 (Roles 属性) 的路由
+ * 必须带有 Name 属性
+ */
+export const asyncRoutes: RouteRecordRaw[] = [
+  // user权限
   {
-    path: "/unocss",
+    path: "/add-info",
     component: Layout,
-    redirect: "/unocss/index",
+    redirect: "/add-info/index",
+    meta: {
+      roles: ["user"]
+    },
     children: [
       {
         path: "index",
-        component: () => import("@/views/unocss/index.vue"),
-        name: "UnoCSS",
+        component: () => import("@/views/user/add-info/index.vue"),
+        name: "add-info",
         meta: {
-          title: "unocss",
-          svgIcon: "unocss"
+          title: "信息填写",
+          roles: ["user"],
+          elIcon: "EditPen"
+        }
+      }
+    ]
+  },
+  // admin权限
+  {
+    path: "/permission",
+    component: Layout,
+    redirect: "/permission/page",
+    name: "Permission",
+    meta: {
+      title: "权限管理",
+      svgIcon: "lock",
+      roles: ["admin", "super"], // 可以在根路由中设置角色
+      alwaysShow: true // 将始终显示根菜单
+    },
+    children: [
+      {
+        path: "page",
+        component: () => import("@/views/permission/page.vue"),
+        name: "PagePermission",
+        meta: {
+          title: "页面权限",
+          roles: ["admin"] // 或者在子导航中设置角色
+        }
+      },
+      {
+        path: "directive",
+        component: () => import("@/views/permission/directive.vue"),
+        name: "DirectivePermission",
+        meta: {
+          title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
         }
       }
     ]
   },
   {
-    path: "/link",
+    path: "/hook-demo",
     component: Layout,
+    redirect: "/hook-demo/use-fetch-select",
+    name: "HookDemo",
+    meta: {
+      title: "hook 示例",
+      elIcon: "Menu",
+      roles: ["admin", "super", "user"],
+      alwaysShow: true
+    },
     children: [
       {
-        path: "https://juejin.cn/post/7089377403717287972",
-        component: () => {},
-        name: "Link",
+        path: "use-fetch-select",
+        component: () => import("@/views/hook-demo/use-fetch-select.vue"),
+        name: "UseFetchSelect",
         meta: {
-          title: "外链",
-          svgIcon: "link"
+          title: "useFetchSelect"
+        }
+      },
+      {
+        path: "use-fullscreen-loading",
+        component: () => import("@/views/hook-demo/use-fullscreen-loading.vue"),
+        name: "UseFullscreenLoading",
+        meta: {
+          title: "useFullscreenLoading"
         }
       }
     ]
@@ -94,6 +170,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: "Table",
     meta: {
       title: "表格",
+      roles: ["admin", "super", "user"],
       elIcon: "Grid"
     },
     children: [
@@ -124,6 +201,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: "Menu",
     meta: {
       title: "多级菜单",
+      roles: ["admin", "super", "user"],
       svgIcon: "menu"
     },
     children: [
@@ -187,74 +265,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: "Menu2",
         meta: {
           title: "menu2"
-        }
-      }
-    ]
-  },
-  {
-    path: "/hook-demo",
-    component: Layout,
-    redirect: "/hook-demo/use-fetch-select",
-    name: "HookDemo",
-    meta: {
-      title: "hook 示例",
-      elIcon: "Menu",
-      alwaysShow: true
-    },
-    children: [
-      {
-        path: "use-fetch-select",
-        component: () => import("@/views/hook-demo/use-fetch-select.vue"),
-        name: "UseFetchSelect",
-        meta: {
-          title: "useFetchSelect"
-        }
-      },
-      {
-        path: "use-fullscreen-loading",
-        component: () => import("@/views/hook-demo/use-fullscreen-loading.vue"),
-        name: "UseFullscreenLoading",
-        meta: {
-          title: "useFullscreenLoading"
-        }
-      }
-    ]
-  }
-]
-
-/**
- * 动态路由
- * 用来放置有权限 (Roles 属性) 的路由
- * 必须带有 Name 属性
- */
-export const asyncRoutes: RouteRecordRaw[] = [
-  {
-    path: "/permission",
-    component: Layout,
-    redirect: "/permission/page",
-    name: "Permission",
-    meta: {
-      title: "权限管理",
-      svgIcon: "lock",
-      roles: ["admin", "editor"], // 可以在根路由中设置角色
-      alwaysShow: true // 将始终显示根菜单
-    },
-    children: [
-      {
-        path: "page",
-        component: () => import("@/views/permission/page.vue"),
-        name: "PagePermission",
-        meta: {
-          title: "页面权限",
-          roles: ["admin"] // 或者在子导航中设置角色
-        }
-      },
-      {
-        path: "directive",
-        component: () => import("@/views/permission/directive.vue"),
-        name: "DirectivePermission",
-        meta: {
-          title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
         }
       }
     ]

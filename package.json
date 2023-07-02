@@ -27,6 +27,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
     "dayjs": "^1.11.8",
+    "element-china-area-data": "^6.0.2",
     "element-plus": "^2.3.6",
     "js-cookie": "^3.0.5",
     "lodash-es": "^4.17.21",

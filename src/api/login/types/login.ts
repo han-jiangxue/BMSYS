@@ -13,10 +13,20 @@ export interface LoginParams {
   uuid?: string
 }
 
+interface UserInfoData {
+  userId: string
+  idCardNumber: string
+  password: string
+  email: string
+  realName: string
+  nickname: string
+  roleName: string
+}
+
 export type LoginCodeResponseData = CaptchaRes
 
 export type LoginRequestData = LoginParams
 
 export type LoginResponseData = ApiResponseData<any>
 
-export type UserInfoResponseData = ApiResponseData<{ username: string; roles: string[] }>
+export type UserInfoResponseData = ApiResponseData<UserInfoData>

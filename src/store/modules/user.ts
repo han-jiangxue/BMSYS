@@ -5,7 +5,7 @@ import { usePermissionStore } from "./permission"
 import { useTagsViewStore } from "./tags-view"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import router, { resetRouter } from "@/router"
-import { loginApi } from "@/api/login"
+import { loginApi, getUserInfoApi } from "@/api/login"
 import { type LoginRequestData } from "@/api/login/types/login"
 import { type RouteRecordRaw } from "vue-router"
 import asyncRouteSettings from "@/config/async-route"
@@ -37,9 +37,10 @@ export const useUserStore = defineStore("user", () => {
   }
   /** 获取用户详情 */
   const getInfo = async () => {
+    const res = await getUserInfoApi()
     const data = {
-      username: userInfo.value?.nickname,
-      roles: [userInfo.value?.roleName]
+      username: res.data?.nickname,
+      roles: [res.data?.roleName || "user"]
     }
     username.value = data.username
     // 验证返回的 roles 是否为一个非空数组，否则塞入一个没有任何作用的默认角色，防止路由守卫逻辑进入无限循环

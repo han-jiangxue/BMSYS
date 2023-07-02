@@ -1,14 +1,7 @@
 <template>
-  <div class="app-container center">
+  <div class="h-full flex justify-center items-center">
     <el-empty description="user 权限可见" />
   </div>
 </template>
 
-<style lang="scss" scoped>
-.center {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
+<style lang="scss" scoped></style>
