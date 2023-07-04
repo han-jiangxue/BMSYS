@@ -1,19 +1,4 @@
-export interface CaptchaRes {
-  code: number
-  message: string
-  date: string
-  data: Record<string, unknown>
-}
-
-export interface LoginParams {
-  idCardNumber: string
-  password: string
-  rememberMe?: boolean
-  code?: string
-  uuid?: string
-}
-
-interface UserInfoData {
+export interface UserInfoData {
   userId: string
   idCardNumber: string
   password: string
@@ -21,6 +6,21 @@ interface UserInfoData {
   realName: string
   nickname: string
   roleName: string
+}
+
+interface CaptchaRes {
+  code: number
+  message: string
+  date: string
+  data: Record<string, unknown>
+}
+
+interface LoginParams {
+  idCardNumber: string
+  password: string
+  rememberMe?: boolean
+  code?: string
+  uuid?: string
 }
 
 export type LoginCodeResponseData = CaptchaRes

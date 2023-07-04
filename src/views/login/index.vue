@@ -69,7 +69,6 @@ const createCode = () => {
   // 获取验证码
   codeUrl.value = ""
   getLoginCodeApi().then((res) => {
-    console.log(res, "res")
     codeUrl.value = `data:image/jpeg;base64,${res.data.image}`
     loginForm.uuid = res.data.uuid as string
   })

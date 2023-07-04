@@ -71,6 +71,7 @@ module.exports = {
       {
         endOfLine: "auto"
       }
-    ]
+    ],
+    "no-console": ["error", { allow: ["warn", "error"] }]
   }
 }

@@ -101,7 +101,147 @@ export const asyncRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: "/submit-info",
+    component: Layout,
+    redirect: "/submit-info/index",
+    meta: {
+      roles: ["user"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/user/submit-info/index.vue"),
+        name: "submit-info",
+        meta: {
+          title: "上传填写",
+          roles: ["user"],
+          elIcon: "Upload"
+        }
+      }
+    ]
+  },
+  {
+    path: "/exam-confirm",
+    component: Layout,
+    redirect: "/exam-confirm/index",
+    meta: {
+      roles: ["user"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/user/exam-confirm/index.vue"),
+        name: "exam-confirm",
+        meta: {
+          title: "考试确认",
+          roles: ["user"],
+          elIcon: "FolderChecked"
+        }
+      }
+    ]
+  },
+  {
+    path: "/result-search",
+    component: Layout,
+    redirect: "/result-search/index",
+    meta: {
+      roles: ["user"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/user/result-search/index.vue"),
+        name: "result-search",
+        meta: {
+          title: "结果查询",
+          roles: ["user"],
+          elIcon: "Search"
+        }
+      }
+    ]
+  },
   // admin权限
+  {
+    path: "/add-management",
+    component: Layout,
+    redirect: "/add-management/index",
+    meta: {
+      roles: ["admin", "super"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/admin/add-management/index.vue"),
+        name: "add-management",
+        meta: {
+          title: "填报管理",
+          roles: ["admin", "super"],
+          elIcon: "EditPen"
+        }
+      }
+    ]
+  },
+  {
+    path: "/exam-management",
+    component: Layout,
+    redirect: "/exam-management/index",
+    meta: {
+      roles: ["admin", "super"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/admin/exam-management/index.vue"),
+        name: "exam-management",
+        meta: {
+          title: "考试管理",
+          roles: ["admin", "super"],
+          elIcon: "Document"
+        }
+      }
+    ]
+  },
+  {
+    path: "/score-management",
+    component: Layout,
+    redirect: "/score-management/index",
+    meta: {
+      roles: ["admin", "super"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/admin/score-management/index.vue"),
+        name: "score-management",
+        meta: {
+          title: "成绩管理",
+          roles: ["admin", "super"],
+          elIcon: "Edit"
+        }
+      }
+    ]
+  },
+  {
+    path: "/user-management",
+    component: Layout,
+    redirect: "/user-management/index",
+    meta: {
+      roles: ["admin", "super"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/admin/user-management/index.vue"),
+        name: "user-management",
+        meta: {
+          title: "人员管理",
+          roles: ["admin", "super"],
+          elIcon: "User"
+        }
+      }
+    ]
+  },
   {
     path: "/permission",
     component: Layout,
