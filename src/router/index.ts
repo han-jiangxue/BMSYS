@@ -163,6 +163,26 @@ export const asyncRoutes: RouteRecordRaw[] = [
   },
   // admin权限
   {
+    path: "/notice-management",
+    component: Layout,
+    redirect: "/notice-management/index",
+    meta: {
+      roles: ["admin", "super"]
+    },
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/admin/notice-management/index.vue"),
+        name: "notice-management",
+        meta: {
+          title: "公告管理",
+          roles: ["admin", "super"],
+          elIcon: "BellFilled"
+        }
+      }
+    ]
+  },
+  {
     path: "/add-management",
     component: Layout,
     redirect: "/add-management/index",
