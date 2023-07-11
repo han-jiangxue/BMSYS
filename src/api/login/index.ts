@@ -6,7 +6,10 @@ enum Api {
   LoginCode = "/user/captcha",
   // 登录
   Login = "/user/login",
-  UserInfo = "/test/userinfo"
+  // 获取用户信息
+  UserInfo = "/test/userinfo",
+  // 邮箱验证码
+  EmailCode = "/user/registerCode"
 }
 
 /** 获取登录验证码 */
@@ -14,6 +17,18 @@ export function getLoginCodeApi() {
   return request<Login.LoginCodeResponseData>({
     url: `${Api.LoginCode}`,
     method: "get"
+  })
+}
+
+/** 获取邮箱验证码 */
+export function getEmailCodeApi(data: any) {
+  return request<Login.LoginCodeResponseData>({
+    url: `${Api.EmailCode}`,
+    method: "post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    data
   })
 }
 

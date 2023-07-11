@@ -23,6 +23,15 @@ interface LoginParams {
   uuid?: string
 }
 
+export interface RegisterParams {
+  idCardNumber: string
+  password: string
+  email: string
+  realName: string
+  code: string
+  newPassword?: string
+}
+
 export type LoginCodeResponseData = CaptchaRes
 
 export type LoginRequestData = LoginParams
