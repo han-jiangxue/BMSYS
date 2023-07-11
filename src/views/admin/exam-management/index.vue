@@ -268,6 +268,7 @@ watch(
       v-model="dialogVisible"
       :title="currentUpdateId === undefined ? '新增考试任务' : '修改考试任务'"
       @close="resetForm"
+      draggable
       width="30%"
     >
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="left">
