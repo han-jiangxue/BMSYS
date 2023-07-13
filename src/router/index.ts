@@ -48,6 +48,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: "/reset-password",
+    component: () => import("@/views/login/ResetPassword.vue"),
+    meta: {
+      hidden: true
+    }
+  },
+  {
     path: "/",
     component: Layout,
     redirect: "/dashboard",

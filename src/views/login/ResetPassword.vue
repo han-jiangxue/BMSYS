@@ -1,51 +1,48 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
-import { User, Lock, Key, Message, Avatar } from "@element-plus/icons-vue"
+import { Lock, Key, Message } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { type FormInstance, FormRules, ElMessage } from "element-plus"
-import { getEmailCodeApi, registerApi } from "@/api/login"
-import { type RegisterParams } from "@/api/login/types/login"
+import { getEmailCodeApi, ResetPassword } from "@/api/login"
+import { type LogoutParams } from "@/api/login/types/login"
 
 const router = useRouter()
-const registerFormRef = ref<FormInstance | null>(null)
+const resetFormRef = ref<FormInstance | null>(null)
 
 /** 登录按钮 Loading */
 const loading = ref(false)
 /** 注册表单数据 */
-const registerForm: RegisterParams = reactive({
-  idCardNumber: "",
+const resetForm: LogoutParams = reactive({
   password: "",
-  realName: "",
   email: "",
   code: "",
   newPassword: ""
 })
 /** 登录表单校验规则 */
-const registerFormRules: FormRules = {
+const resetFormRules: FormRules = {
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
     { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
-  ],
-  idCardNumber: [
-    { required: true, message: "请输入身份证号", trigger: "blur" },
-    { min: 15, max: 18, message: "长度在 15 到 18 个字符", trigger: "blur" }
   ],
   newPassword: [
     { required: true, message: "请输入密码", trigger: "blur" },
     { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
   ],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
-  realName: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
   email: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
 }
-/** 注册逻辑 */
-const handleRegister = () => {
-  registerFormRef.value?.validate((valid: boolean) => {
+/** 修改密码逻辑 */
+const handleResetPassword = () => {
+  resetFormRef.value?.validate((valid: boolean) => {
     if (valid) {
+      if (resetForm.password !== resetForm.newPassword) {
+        ElMessage.warning("请确保两次密码一致")
+        return
+      }
       loading.value = true
-      registerApi(registerForm, {
-        code: `${registerForm.code}/${registerForm.email}`
+      ResetPassword(resetForm, {
+        code: `${resetForm.code}/${resetForm.email}`
       })
         .then((res: any) => {
           if (res.code === 200) {
@@ -56,26 +53,11 @@ const handleRegister = () => {
           }
         })
         .catch(() => {
-          registerForm.password = ""
+          resetForm.email = ""
         })
         .finally(() => {
           loading.value = false
         })
-      // useUserStore()
-      //   .login({
-      //     idCardNumber: registerForm.idCardNumber,
-      //     password: registerForm.password,
-      //     code: registerForm.code
-      //   })
-      //   .then(() => {
-      //     router.push({ path: "/" })
-      //   })
-      //   .catch(() => {
-      //     registerForm.password = ""
-      //   })
-      //   .finally(() => {
-      //     loading.value = false
-      //   })
     } else {
       return false
     }
@@ -83,11 +65,11 @@ const handleRegister = () => {
 }
 
 const getEmailCode = async () => {
-  if (!registerForm.email) {
+  if (!resetForm.email) {
     ElMessage.warning("请输邮箱")
     return
   }
-  await getEmailCodeApi({ email: registerForm.email }).then((res: any) => {
+  await getEmailCodeApi({ email: resetForm.email }).then((res: any) => {
     if (res.code === 200) {
       ElMessage.success("已发送验证码")
     }
@@ -104,30 +86,10 @@ const getEmailCode = async () => {
         <span class="font-800 text-6 ml">中国矿业大学辅导员报名系统</span>
       </div>
       <div class="content">
-        <el-form ref="registerFormRef" :model="registerForm" :rules="registerFormRules" @keyup.enter="handleRegister">
-          <el-form-item prop="username">
-            <el-input
-              v-model.trim="registerForm.idCardNumber"
-              placeholder="请输入身份证号码"
-              type="text"
-              tabindex="1"
-              :prefix-icon="User"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item prop="realName">
-            <el-input
-              v-model.trim="registerForm.realName"
-              placeholder="请输入真实姓名"
-              type="text"
-              tabindex="2"
-              :prefix-icon="Avatar"
-              size="large"
-            />
-          </el-form-item>
+        <el-form ref="resetFormRef" :model="resetForm" :rules="resetFormRules" @keyup.enter="handleResetPassword">
           <el-form-item prop="password">
             <el-input
-              v-model.trim="registerForm.password"
+              v-model.trim="resetForm.password"
               placeholder="请输入密码"
               type="password"
               tabindex="3"
@@ -138,7 +100,7 @@ const getEmailCode = async () => {
           </el-form-item>
           <el-form-item prop="password">
             <el-input
-              v-model.trim="registerForm.newPassword"
+              v-model.trim="resetForm.newPassword"
               placeholder="请再次输入密码"
               type="password"
               tabindex="3"
@@ -149,7 +111,7 @@ const getEmailCode = async () => {
           </el-form-item>
           <el-form-item prop="email">
             <el-input
-              v-model.trim="registerForm.email"
+              v-model.trim="resetForm.email"
               placeholder="邮箱"
               type="text"
               tabindex="4"
@@ -168,7 +130,7 @@ const getEmailCode = async () => {
           </el-form-item>
           <el-form-item prop="code">
             <el-input
-              v-model.trim="registerForm.code"
+              v-model.trim="resetForm.code"
               placeholder="请输入邮箱验证码"
               type="text"
               tabindex="5"
@@ -176,7 +138,9 @@ const getEmailCode = async () => {
               size="large"
             />
           </el-form-item>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleRegister"> 注 册 </el-button>
+          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleResetPassword">
+            提 交
+          </el-button>
         </el-form>
       </div>
     </div>

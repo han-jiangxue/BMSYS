@@ -78,6 +78,10 @@ const handleRegister = () => {
   router.push({ path: "/register" })
 }
 
+const handleResetPassword = () => {
+  router.push({ path: "/reset-password" })
+}
+
 /** 初始化验证码 */
 createCode()
 </script>
@@ -136,7 +140,7 @@ createCode()
             </el-input>
           </el-form-item>
           <div class="h-4 px-6 flex items-center justify-between text-3 font-600">
-            <div class="hover:color-blue cursor-pointer underline">忘记密码</div>
+            <div class="hover:color-blue cursor-pointer underline" @click="handleResetPassword">忘记密码</div>
             <div class="hover:color-blue cursor-pointer underline" @click="handleRegister">注册新用户</div>
           </div>
           <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin"> 登 录 </el-button>

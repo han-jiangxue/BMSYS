@@ -32,6 +32,18 @@ export interface RegisterParams {
   newPassword?: string
 }
 
+export interface LogoutParams {
+  password: string
+  email: string
+  code: string
+  newPassword?: string
+}
+
+export interface ResetPasswordParams {
+  email?: string
+  password?: string
+}
+
 export type LoginCodeResponseData = CaptchaRes
 
 export type LoginRequestData = LoginParams
