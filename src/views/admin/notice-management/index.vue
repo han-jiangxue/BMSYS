@@ -5,13 +5,16 @@ import {
   getNoticeBasedYearAPI,
   addNoticeAPI,
   editNoticeAPI,
-  getNoticeBasedTitleAPI
+  getNoticeBasedTitleAPI,
+  getGetAllNoticeAPI,
+  deleteNoticeAPI
 } from "@/api/admin/notice-management"
 import { usePagination } from "@/hooks/usePagination"
 import { formatDateTime } from "@/utils"
 
 // TODU: 删除
 const loading = ref<boolean>(false)
+const isSearch = ref<boolean>(false)
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
 const tableData = ref<any>([])
 const searchFormRef = ref<FormInstance | null>(null)
@@ -32,6 +35,30 @@ const formData = reactive({
 const formRef = ref<FormInstance | null>(null)
 
 const getTableData = () => {
+  if (isSearch.value) {
+    return
+  }
+  loading.value = true
+  getGetAllNoticeAPI({
+    current: paginationData.currentPage,
+    size: paginationData.pageSize
+  })
+    .then((res: any) => {
+      paginationData.total = res.data.data.total
+      tableData.value = res.data.data.records
+    })
+    .catch(() => {
+      tableData.value = []
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+const getTableSearchData = () => {
+  if (!isSearch.value) {
+    return
+  }
   loading.value = true
   if (!searchData.title) {
     getNoticeBasedYearAPI({
@@ -90,6 +117,7 @@ const handleUpdate = (row: any) => {
 }
 
 const resetSearch = () => {
+  isSearch.value = false
   searchFormRef.value?.resetFields()
   searchData.title = ""
   if (paginationData.currentPage === 1) {
@@ -130,11 +158,23 @@ const handleCreate = () => {
   })
 }
 
+const handleSearch = async () => {
+  isSearch.value = true
+  await getTableSearchData()
+}
+
+const handleDelete = (id: any) => {
+  deleteNoticeAPI({
+    id
+  })
+}
+
 /** 监听分页参数的变化 */
 watch(
   [() => paginationData.currentPage, () => paginationData.pageSize],
   () => {
     getTableData()
+    getTableSearchData()
   },
   {
     immediate: true
@@ -164,7 +204,7 @@ onMounted(() => {
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getTableData">查询</el-button>
+          <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
           <el-button @click="dialogVisible = true">新增公告</el-button>
         </el-form-item>
@@ -187,7 +227,12 @@ onMounted(() => {
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template #default="scope">
               <el-button type="primary" text bg size="small" @click="handleUpdate(scope.row)">编辑</el-button>
-              <el-popconfirm title="确认删除该任务吗？" confirm-button-text="确认" cancel-button-text="取消">
+              <el-popconfirm
+                title="确认删除该公告吗？"
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                @confirm="handleDelete(scope.row.announcementId)"
+              >
                 <template #reference>
                   <el-button type="danger" text bg size="small">删除</el-button>
                 </template>

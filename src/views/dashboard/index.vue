@@ -8,11 +8,11 @@ type CurrentRole = "admin" | "super" | "user"
 
 const userStore = useUserStore()
 const currentRole = ref<CurrentRole>("admin")
-if (!userStore.roles.includes("admin")) {
+if (!userStore.roles.includes("admin") && !userStore.roles.includes("super")) {
   currentRole.value = "user"
 }
 </script>
 
 <template>
-  <component :is="currentRole === 'admin' || currentRole === 'super' ? AdminDashboard : UserDashboard" />
+  <component :is="currentRole === 'admin' ? AdminDashboard : UserDashboard" />
 </template>

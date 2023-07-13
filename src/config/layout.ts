@@ -25,7 +25,7 @@ const layoutSettings: LayoutSettings = {
   showTagsView: true,
   fixedHeader: true,
   showSidebarLogo: true,
-  showNotify: true,
+  showNotify: false,
   showThemeSwitch: true,
   showScreenfull: true,
   showGreyMode: false,

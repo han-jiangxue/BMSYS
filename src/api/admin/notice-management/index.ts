@@ -9,7 +9,19 @@ enum Api {
   // 按标题筛选
   NoticeBasedTitle = "/announcement/manage/search",
   // 更新公告
-  UpdateNotice = "/announcement/manage/update"
+  UpdateNotice = "/announcement/manage/update",
+  // 获取全部公告
+  GetAllNotice = "/announcement/manage/showall",
+  // 删除公告
+  DeleteNotice = "/announcement/manage/delete"
+}
+
+export function getGetAllNoticeAPI(params: any) {
+  return request({
+    url: Api.GetAllNotice,
+    method: "get",
+    params
+  })
 }
 
 export function getNoticeBasedYearAPI(params: any) {
@@ -43,6 +55,14 @@ export function addNoticeAPI(data: Notice.AddNoticeParams) {
 export function editNoticeAPI(data: Notice.AddNoticeParams) {
   return request({
     url: Api.UpdateNotice,
+    method: "post",
+    data
+  })
+}
+
+export function deleteNoticeAPI(data: any) {
+  return request({
+    url: Api.DeleteNotice,
     method: "post",
     data
   })
