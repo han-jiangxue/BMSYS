@@ -10,6 +10,7 @@ import { type LoginRequestData } from "@/api/login/types/login"
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
+const preloadedImages = ref<Array<HTMLImageElement>>([])
 const imgLists = [
   "https://www.cumt.edu.cn/_upload/article/images/3a/d1/7adb0a18490496898ac507219537/6b22aff9-552d-45d4-9eec-148f29f4a3d5.jpg",
   "https://www.cumt.edu.cn/_upload/article/images/9c/a8/9da085a548b9a3121a9318a71927/700b95a5-342e-4f99-b1eb-90c33f359980.jpg",
@@ -95,86 +96,105 @@ const handleResetPassword = () => {
 createCode()
 
 onMounted(() => {
-  intervalId = setInterval(() => {
-    currentImageIndex = (currentImageIndex + 1) % imgLists.length
-    imageUrl.value = imgLists[currentImageIndex]
-  }, 5000)
+  preloadImages()
+  startImageTransition()
 })
 onBeforeUnmount(() => {
   if (intervalId) {
     clearInterval(intervalId)
   }
 })
+
+async function preloadImages() {
+  for (const imageUrl of imgLists) {
+    const image = new Image()
+    await new Promise((resolve, reject) => {
+      image.onload = resolve
+      image.onerror = reject
+      image.src = imageUrl
+    })
+    preloadedImages.value.push(image)
+  }
+}
+
+function startImageTransition() {
+  intervalId = setInterval(() => {
+    currentImageIndex = (currentImageIndex + 1) % imgLists.length
+    imageUrl.value = imgLists[currentImageIndex]
+  }, 3000)
+}
 </script>
 
 <template>
-  <div class="login-container" :style="{ backgroundImage: `url(${imageUrl})` }">
-    <ThemeSwitch class="theme-switch" />
-    <div class="bg-card" :style="{ backgroundImage: `url(${imageUrl})` }" />
-    <div class="login-card">
-      <div class="title">
-        <img width="60" src="@/assets/layout/CUMT.png" />
-        <span class="font-800 text-6 ml">中国矿业大学辅导员报名系统</span>
-      </div>
-      <div class="content">
-        <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="username">
-            <el-input
-              v-model.trim="loginForm.idCardNumber"
-              placeholder="请输入身份证号"
-              type="text"
-              tabindex="1"
-              :prefix-icon="User"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              v-model.trim="loginForm.password"
-              placeholder="密码"
-              type="password"
-              tabindex="2"
-              :prefix-icon="Lock"
-              size="large"
-              show-password
-            />
-          </el-form-item>
-          <el-form-item prop="code">
-            <el-input
-              v-model.trim="loginForm.code"
-              placeholder="验证码"
-              type="text"
-              tabindex="3"
-              :prefix-icon="Key"
-              maxlength="7"
-              size="large"
-            >
-              <template #append>
-                <el-image :src="codeUrl" @click="createCode" draggable="false">
-                  <template #placeholder>
-                    <el-icon><Picture /></el-icon>
-                  </template>
-                  <template #error>
-                    <el-icon><Loading /></el-icon>
-                  </template>
-                </el-image>
-              </template>
-            </el-input>
-          </el-form-item>
-          <div class="h-4 px-6 flex items-center justify-between text-3 font-600">
-            <div class="hover:color-blue cursor-pointer underline" @click="handleResetPassword">忘记密码</div>
-            <div class="hover:color-blue cursor-pointer underline" @click="handleRegister">注册新用户</div>
-          </div>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin"> 登 录 </el-button>
-        </el-form>
+  <transition name="fade">
+    <div class="login-container" :style="{ backgroundImage: `url(${imageUrl})` }">
+      <ThemeSwitch class="theme-switch" />
+      <div class="bg-card" :style="{ backgroundImage: `url(${imageUrl})` }" />
+      <div class="login-card">
+        <div class="title">
+          <img width="60" src="@/assets/layout/CUMT.png" />
+          <span class="font-800 text-6 ml">中国矿业大学辅导员报名系统</span>
+        </div>
+        <div class="content">
+          <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" @keyup.enter="handleLogin">
+            <el-form-item prop="username">
+              <el-input
+                v-model.trim="loginForm.idCardNumber"
+                placeholder="请输入身份证号"
+                type="text"
+                tabindex="1"
+                :prefix-icon="User"
+                size="large"
+              />
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                v-model.trim="loginForm.password"
+                placeholder="密码"
+                type="password"
+                tabindex="2"
+                :prefix-icon="Lock"
+                size="large"
+                show-password
+              />
+            </el-form-item>
+            <el-form-item prop="code">
+              <el-input
+                v-model.trim="loginForm.code"
+                placeholder="验证码"
+                type="text"
+                tabindex="3"
+                :prefix-icon="Key"
+                maxlength="7"
+                size="large"
+              >
+                <template #append>
+                  <el-image :src="codeUrl" @click="createCode" draggable="false">
+                    <template #placeholder>
+                      <el-icon><Picture /></el-icon>
+                    </template>
+                    <template #error>
+                      <el-icon><Loading /></el-icon>
+                    </template>
+                  </el-image>
+                </template>
+              </el-input>
+            </el-form-item>
+            <div class="h-4 px-6 flex items-center justify-between text-3 font-600">
+              <div class="hover:color-blue cursor-pointer underline" @click="handleResetPassword">忘记密码</div>
+              <div class="hover:color-blue cursor-pointer underline" @click="handleRegister">注册新用户</div>
+            </div>
+            <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin"> 登 录 </el-button>
+          </el-form>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <style lang="scss" scoped>
 .login-container {
-  // background-image: url("@/assets/layout/bg-1.jpg");
+  will-change: opacity;
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -227,5 +247,14 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
