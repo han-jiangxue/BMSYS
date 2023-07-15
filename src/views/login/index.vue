@@ -99,7 +99,7 @@ createCode()
           <el-form-item prop="username">
             <el-input
               v-model.trim="loginForm.idCardNumber"
-              placeholder="用户名"
+              placeholder="请输入身份证号"
               type="text"
               tabindex="1"
               :prefix-icon="User"

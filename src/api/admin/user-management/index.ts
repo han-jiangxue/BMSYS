@@ -56,7 +56,7 @@ export function editUserApi(data: any) {
 
 export function delUserApi(data: any) {
   return request({
-    url: `${Api.EditUser}/${data}`,
+    url: `${Api.DeleteUser}/${data}`,
     method: "get",
     data
   })

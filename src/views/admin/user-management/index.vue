@@ -4,6 +4,8 @@ import { type FormInstance, ElMessage, ElPopconfirm } from "element-plus"
 import { addUserApi, getAllUsersAPI, editUserApi, delUserApi, getUsersAPI } from "@/api/admin/user-management"
 import { usePagination } from "@/hooks/usePagination"
 
+/* 超管账号 */
+
 // TODU：类型提升
 const isSearch = ref<boolean>(false)
 const loading = ref<boolean>(false)
@@ -104,10 +106,13 @@ const handleUpdate = (row: any) => {
 const resetSearch = () => {
   isSearch.value = false
   searchFormRef.value?.resetFields()
-  searchData.email = ""
-  searchData.idCardNumber = ""
-  searchData.realName = ""
-  searchData.roleName = ""
+  const defaultSearchData = {
+    idCardNumber: "",
+    email: "",
+    realName: "",
+    roleName: ""
+  }
+  Object.assign(searchData, defaultSearchData)
   if (paginationData.currentPage === 1) {
     getTableData()
   }
