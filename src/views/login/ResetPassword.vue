@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref } from "vue"
+import { reactive, ref, onMounted, onBeforeUnmount } from "vue"
 import { useRouter } from "vue-router"
 import { Lock, Key, Message } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
@@ -9,6 +9,15 @@ import { type LogoutParams } from "@/api/login/types/login"
 
 const router = useRouter()
 const resetFormRef = ref<FormInstance | null>(null)
+const imgLists = [
+  "https://www.cumt.edu.cn/_upload/article/images/3a/d1/7adb0a18490496898ac507219537/6b22aff9-552d-45d4-9eec-148f29f4a3d5.jpg",
+  "https://www.cumt.edu.cn/_upload/article/images/9c/a8/9da085a548b9a3121a9318a71927/700b95a5-342e-4f99-b1eb-90c33f359980.jpg",
+  "https://www.cumt.edu.cn/_upload/article/images/3a/d1/7adb0a18490496898ac507219537/0013b074-ae4a-478b-b9e0-58fd09f673bd.jpg",
+  "https://www.cumt.edu.cn/_upload/article/images/9f/71/47e2e69b4d8a9832d93d4a71fe18/a3c648ad-99c2-4f46-88e3-76a947dab64a.jpg"
+]
+const imageUrl = ref(imgLists[0])
+let currentImageIndex = 0
+let intervalId: ReturnType<typeof setInterval> | null = null
 
 /** 登录按钮 Loading */
 const loading = ref(false)
@@ -75,11 +84,24 @@ const getEmailCode = async () => {
     }
   })
 }
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    currentImageIndex = (currentImageIndex + 1) % imgLists.length
+    imageUrl.value = imgLists[currentImageIndex]
+  }, 5000)
+})
+onBeforeUnmount(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 </script>
 
 <template>
-  <div class="login-container">
+  <div class="login-container" :style="{ backgroundImage: `url(${imageUrl})` }">
     <ThemeSwitch class="theme-switch" />
+    <div class="bg-card" :style="{ backgroundImage: `url(${imageUrl})` }" />
     <div class="login-card">
       <div class="title">
         <img width="60" src="@/assets/layout/CUMT.png" />
@@ -139,7 +161,7 @@ const getEmailCode = async () => {
             />
           </el-form-item>
           <el-button :loading="loading" type="primary" size="large" @click.prevent="handleResetPassword">
-            提 交
+            重置密码
           </el-button>
         </el-form>
       </div>
@@ -149,6 +171,9 @@ const getEmailCode = async () => {
 
 <style lang="scss" scoped>
 .login-container {
+  // background-image: url("@/assets/layout/bg-1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,6 +184,13 @@ const getEmailCode = async () => {
     top: 5%;
     right: 5%;
     cursor: pointer;
+  }
+  .bg-card {
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 480px;
+    height: 320px;
+    margin-right: 20px;
   }
   .login-card {
     width: 480px;
