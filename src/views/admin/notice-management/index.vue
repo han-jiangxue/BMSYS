@@ -27,6 +27,7 @@ const searchData = reactive({
 const formData = reactive({
   title: "",
   createDate: "",
+  modifyDate: "",
   link: "",
   issued: "",
   visible: "1",
@@ -100,6 +101,7 @@ const resetForm = () => {
   formData.title = ""
   formData.issued = ""
   formData.createDate = ""
+  formData.modifyDate = ""
   formData.link = ""
   formData.visible = "1"
   formData.announcementId = ""
@@ -111,6 +113,7 @@ const handleUpdate = (row: any) => {
   formData.title = row.title
   formData.issued = row.issued
   formData.createDate = row.createDate
+  formData.modifyDate = row.modifyDate
   formData.link = row.link
   formData.visible = row.visible
   dialogVisible.value = true
@@ -128,8 +131,8 @@ const resetSearch = () => {
 
 function getStatusLabel(taskStatus: any) {
   const statusMap: { [key: number]: string } = {
-    "1": "可见",
-    "0": "不可见"
+    "0": "可见",
+    "1": "不可见"
   }
 
   return statusMap[taskStatus as number] || "未知状态"
@@ -139,6 +142,7 @@ const handleCreate = () => {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
       formData.createDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
+      formData.modifyDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
       if (currentUpdateId.value === undefined) {
         addNoticeAPI(formData).then(() => {
           ElMessage.success("新增成功")
@@ -269,6 +273,9 @@ onMounted(() => {
         <el-form-item label="创建时间">
           <el-date-picker v-model="formData.createDate" type="datetime" placeholder="请选择时间" />
         </el-form-item>
+        <el-form-item label="更新时间" v-if="currentUpdateId !== undefined">
+          <el-date-picker v-model="formData.modifyDate" type="datetime" placeholder="请选择时间" />
+        </el-form-item>
         <el-form-item prop="link" label="超链接">
           <el-input v-model="formData.link" placeholder="请输入超链接" />
         </el-form-item>
@@ -277,8 +284,8 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="是否可见">
           <el-radio-group v-model="formData.visible">
-            <el-radio label="1">可见</el-radio>
-            <el-radio label="0">不可见</el-radio>
+            <el-radio label="0">可见</el-radio>
+            <el-radio label="1">不可见</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
