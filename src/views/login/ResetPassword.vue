@@ -4,7 +4,8 @@ import { useRouter } from "vue-router"
 import { Lock, Key, Message } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { type FormInstance, FormRules, ElMessage } from "element-plus"
-import { getEmailCodeApi, ResetPassword } from "@/api/login"
+import { getEmailCodeApi, ResetPassword, getPublicKeyApi } from "@/api/login"
+import { rsaEncrypt } from "@/utils/encrypt"
 import { type LogoutParams } from "@/api/login/types/login"
 
 const router = useRouter()
@@ -27,7 +28,8 @@ const resetForm: LogoutParams = reactive({
   password: "",
   email: "",
   code: "",
-  newPassword: ""
+  newPassword: "",
+  publicKey: ""
 })
 /** 登录表单校验规则 */
 const resetFormRules: FormRules = {
@@ -50,13 +52,14 @@ const handleResetPassword = () => {
         ElMessage.warning("请确保两次密码一致")
         return
       }
+      resetForm.password = rsaEncrypt(resetForm.publicKey, resetForm.password)
       loading.value = true
       ResetPassword(resetForm, {
         code: `${resetForm.code}/${resetForm.email}`
       })
         .then((res: any) => {
           if (res.code === 200) {
-            ElMessage.success("注册成功")
+            ElMessage.success("修改成功")
             setTimeout(() => {
               router.push({ path: "/login" })
             }, 1000)
@@ -64,6 +67,8 @@ const handleResetPassword = () => {
         })
         .catch(() => {
           resetForm.email = ""
+          resetForm.password = ""
+          resetForm.newPassword = ""
         })
         .finally(() => {
           loading.value = false
@@ -86,9 +91,14 @@ const getEmailCode = async () => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   preloadImages()
   startImageTransition()
+  await getPublicKeyApi().then((res: any) => {
+    if (res.code === 200) {
+      resetForm.publicKey = res.data.publicKey
+    }
+  })
 })
 onBeforeUnmount(() => {
   if (intervalId) {

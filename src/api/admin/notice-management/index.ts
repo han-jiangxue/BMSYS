@@ -60,10 +60,9 @@ export function editNoticeAPI(data: Notice.AddNoticeParams) {
   })
 }
 
-export function deleteNoticeAPI(data: any) {
+export function deleteNoticeAPI(id: number) {
   return request({
-    url: Api.DeleteNotice,
-    method: "post",
-    data
+    url: `${Api.DeleteNotice}?id=${id}`,
+    method: "post"
   })
 }

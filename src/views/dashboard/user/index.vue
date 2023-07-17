@@ -60,17 +60,17 @@ onMounted(async () => {
           <div class="flex justify-start items-center">
             <div
               class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
-              @click="handleSkip('exam-confirm')"
+              @click="handleSkip('result-search')"
             >
-              考试确认
+              结果查询
             </div>
             <div class="triangle-left" />
             <div class="w-8 h-8 bg-#FFF" />
             <div
               class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
-              @click="handleSkip('result-search')"
+              @click="handleSkip('exam-confirm')"
             >
-              结果查询
+              考试确认
             </div>
           </div>
         </div>

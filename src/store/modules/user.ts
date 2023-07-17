@@ -24,9 +24,9 @@ export const useUserStore = defineStore("user", () => {
     roles.value = value
   }
   /** 登录 */
-  const login = async ({ idCardNumber, password, code, rememberMe, uuid }: LoginRequestData) => {
+  const login = async ({ idCardNumber, password, code, rememberMe, uuid, publicKey }: LoginRequestData) => {
     const { data } = await loginApi(
-      { idCardNumber, password, rememberMe },
+      { idCardNumber, password, rememberMe, publicKey },
       {
         code: `${code}/${uuid}`
       }
@@ -39,7 +39,7 @@ export const useUserStore = defineStore("user", () => {
   const getInfo = async () => {
     const res = await getUserInfoApi()
     const data = {
-      username: res.data?.nickname,
+      username: res.data?.realName,
       roles: [res.data?.roleName || "user"]
     }
     username.value = data.username

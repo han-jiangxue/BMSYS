@@ -6,6 +6,8 @@ enum Api {
   LoginCode = "/user/captcha",
   // 登录
   Login = "/user/login",
+  // 获取公钥
+  GetPublicKey = "/user/getPublicKey",
   // 获取用户信息
   UserInfo = "/test/userinfo",
   // 邮箱验证码
@@ -49,6 +51,13 @@ export function getEmailCodeApi(data: any) {
   })
 }
 
+export function getPublicKeyApi() {
+  return request({
+    url: Api.GetPublicKey,
+    method: "get"
+  })
+}
+
 /** 登录并返回 Token */
 export function loginApi(data: Login.LoginRequestData, headers: any) {
   return request<Login.LoginResponseData>({
@@ -88,7 +97,7 @@ export function registerApi(data: Login.RegisterParams, headers: any) {
 /** 修改密码 */
 export function ResetPassword(data: Login.ResetPasswordParams, headers: any) {
   return request<Login.LoginResponseData>({
-    url: `${Api.Register}`,
+    url: `${Api.ResetPassword}`,
     method: "post",
     data,
     headers

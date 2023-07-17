@@ -20,9 +20,15 @@ dependencies:
   element-plus:
     specifier: ^2.3.7
     version: registry.npmmirror.com/element-plus@2.3.7(vue@3.3.4)
+  file-saver:
+    specifier: ^2.0.5
+    version: registry.npmmirror.com/file-saver@2.0.5
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
+  jsencrypt:
+    specifier: ^3.3.2
+    version: registry.npmmirror.com/jsencrypt@3.3.2
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -61,6 +67,9 @@ dependencies:
     version: 3.5.11
 
 devDependencies:
+  '@types/file-saver':
+    specifier: ^2.0.5
+    version: registry.npmmirror.com/@types/file-saver@2.0.5
   '@types/js-cookie':
     specifier: ^3.0.3
     version: 3.0.3
@@ -5230,6 +5239,12 @@ packages:
     version: 2.11.7
     dev: false
 
+  registry.npmmirror.com/@types/file-saver@2.0.5:
+    resolution: {integrity: sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/file-saver/-/file-saver-2.0.5.tgz}
+    name: '@types/file-saver'
+    version: 2.0.5
+    dev: true
+
   registry.npmmirror.com/@vue/compiler-dom@3.3.4:
     resolution: {integrity: sha512-wyM+OjOVpuUukIq6p5+nwHYtj9cFroz9cwkfmP9O1nzH68BenTTv0u7/ndggT8cIQlnBeOo6sUT/gvHcIkLA5w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/compiler-dom/-/compiler-dom-3.3.4.tgz}
     name: '@vue/compiler-dom'
@@ -5294,6 +5309,12 @@ packages:
       - '@vue/composition-api'
     dev: false
 
+  registry.npmmirror.com/file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/file-saver/-/file-saver-2.0.5.tgz}
+    name: file-saver
+    version: 2.0.5
+    dev: false
+
   registry.npmmirror.com/fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/fsevents/-/fsevents-2.3.2.tgz}
     name: fsevents
@@ -5311,6 +5332,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  registry.npmmirror.com/jsencrypt@3.3.2:
+    resolution: {integrity: sha512-arQR1R1ESGdAxY7ZheWr12wCaF2yF47v5qpB76TtV64H1pyGudk9Hvw8Y9tb/FiTIaaTRUyaSnm5T/Y53Ghm/A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/jsencrypt/-/jsencrypt-3.3.2.tgz}
+    name: jsencrypt
+    version: 3.3.2
+    dev: false
 
   registry.npmmirror.com/nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nanoid/-/nanoid-3.3.6.tgz}

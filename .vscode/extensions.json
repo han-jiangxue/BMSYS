@@ -7,6 +7,7 @@
     "vue.volar",
     "antfu.unocss",
     "zixuanchen.vitest-explorer",
-    "wiensss.region-highlighter"
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens"
   ]
 }

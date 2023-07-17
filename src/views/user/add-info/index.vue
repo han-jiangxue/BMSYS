@@ -1,28 +1,19 @@
 <script lang="ts" setup>
 import { regionData } from "element-china-area-data"
-import { CascaderOption, UploadUserFile } from "element-plus"
-import { onMounted, reactive, ref } from "vue"
-import { getInfoAPI, addInfoApi, updateInfoApi } from "@/api/user/add-info"
+import { CascaderOption, ElMessage, ElMessageBox, ElLoading } from "element-plus"
+import { onMounted, reactive, ref, watchEffect } from "vue"
+import { getInfoAPI, addInfoApi, updateInfoApi, getPictureApi, getWordFileApi } from "@/api/user/add-info"
 import { getUserInfoApi } from "@/api/login"
 import { formatDateTime } from "@/utils"
 import { getToken } from "@/utils/cache/cookies"
 import { getLocation, getPositionArray } from "@/utils/location"
 import type { AddInfoRequestData, GetInfoResponseData } from "@/api/user/add-info/types"
 import type { UserInfoData } from "@/api/login/types/login"
-import { watchEffect } from "vue"
+import { saveAs } from "file-saver"
 
 // TODU: 空值校验
 
-const fileList = ref<UploadUserFile[]>([
-  {
-    name: "food.jpeg",
-    url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-  },
-  {
-    name: "food2.jpeg",
-    url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-  }
-])
+const fileList = ref()
 const picUrl = import.meta.env.VITE_BASE_API + "/file/uploadPhoto"
 const token = getToken()
 const isLoaded = ref(false)
@@ -39,6 +30,7 @@ async function init() {
   const res: GetInfoResponseData = await getInfoAPI()
   Object.assign(infoForm, res.data)
   infoForm.position = getPositionArray(infoForm.position, regionData)
+  getPicUrl()
   isLoaded.value = true
 }
 
@@ -46,11 +38,95 @@ async function handleSubmit(type: "submit" | "update") {
   infoForm.birthday = formatDateTime(infoForm.birthday as string)
   infoForm.partyJoiningTime = formatDateTime(infoForm.partyJoiningTime as string)
   infoForm.position = getLocation(infoForm.position as unknown as [])
-  if (type === "submit") await addInfoApi(infoForm)
-  else if (type === "update") {
-    await updateInfoApi(infoForm)
+  if (type === "submit") {
+    await addInfoApi(infoForm).then((res: any) => {
+      if (res.code === 200) {
+        ElMessage.success("提交成功")
+      }
+    })
+  } else if (type === "update") {
+    await updateInfoApi(infoForm).then((res: any) => {
+      if (res.code === 200) {
+        ElMessage.success("更新成功")
+      }
+    })
   }
   init()
+}
+
+const getPicUrl = async () => {
+  await getPictureApi().then((res: any) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(res)
+    reader.onload = () => {
+      fileList.value = reader.result as unknown as any
+    }
+  })
+}
+
+// TODU: 貌似无法二次上传
+const handleBeforeUpload = (file: File) => {
+  return new Promise<void>((resolve, reject) => {
+    ElMessageBox.confirm(
+      "所有上传扫描件均为jpg格式，图片清晰，不超过1M，上传前jpg文件以“姓名+材料名称”命名。确定上传吗？",
+      "上传确认",
+      {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning"
+      }
+    )
+      .then(() => {
+        // 判断文件大小是否超过1MB
+        const fileSizeLimit = 1 * 1024 * 1024 // 1MB
+        if (file.size > fileSizeLimit) {
+          ElMessage({
+            type: "warning",
+            message: "文件大小超过1MB，请选择文件大小不超过1MB的图片。"
+          })
+          reject() // 拒绝Promise，阻止上传
+          return
+        }
+
+        // 用户点击确认且文件大小符合要求，执行上传操作
+        resolve() // 解析Promise，允许上传
+      })
+      .catch(() => {
+        ElMessage({
+          type: "info",
+          message: "已取消上传"
+        })
+        reject() // 拒绝Promise，阻止上传
+      })
+  })
+}
+
+const handleSuccess = (res: any) => {
+  if (res.code === 200) {
+    getPicUrl()
+    ElMessage.success("上传成功！")
+    setTimeout(() => {
+      isDialogShow.value.addPicVisible = false
+    }, 2000)
+  }
+}
+
+const handleExportWord = async () => {
+  const downloadLoadingInstance = ElLoading.service({
+    text: "正在下载文件，请稍候",
+    lock: true,
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    const response: any = await getWordFileApi()
+    saveAs(response, `${userInfo.value?.realName}报名表.doc`)
+    downloadLoadingInstance.close()
+    ElMessage.success("文件下载完成")
+  } catch (error) {
+    console.error("导出Word文件出错", error)
+    ElMessage.error("下载文件出现错误！")
+    downloadLoadingInstance.close()
+  }
 }
 
 watchEffect(() => {
@@ -76,12 +152,6 @@ onMounted(async () => {
           <el-form-item label="身份证号">
             <el-input disabled v-model="userInfo!.idCardNumber" placeholder="请输入身份证号" clearable />
           </el-form-item>
-          <!-- <el-form-item label="性&emsp;&emsp;别">
-            <el-radio-group v-model="infoForm.gender">
-              <el-radio :label="1">男</el-radio>
-              <el-radio :label="2">女</el-radio>
-            </el-radio-group>
-          </el-form-item> -->
           <el-form-item label="性&emsp;&emsp;别">
             <el-select v-model="infoForm.gender" placeholder="请选择性别" clearable>
               <el-option label="男" :value="1" />
@@ -246,7 +316,7 @@ onMounted(async () => {
             <el-button type="primary" class="w-60" @click="handleSubmit('update')">更新</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="w-60">导出</el-button>
+            <el-button type="primary" class="w-60" @click="handleExportWord">导出</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -284,24 +354,34 @@ onMounted(async () => {
     >
       <div class="flex w-100% justify-center">
         <el-upload
-          class="w-60! h-60!"
-          v-model:file-list="fileList"
-          drag
+          class="avatar-uploader"
+          :show-file-list="false"
           :limit="1"
           :action="picUrl"
+          :before-upload="handleBeforeUpload"
+          :on-success="handleSuccess"
           :headers="{ token: token }"
         >
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="">上传正面免冠证件照1张</div>
+          <img v-if="fileList" :src="fileList" class="w-30" />
+          <el-icon class="text-40!" v-else><upload-filled /></el-icon>
+          <div class="mt-4">上传正面免冠证件照1张</div>
           <div class="text-2">（1寸2.5*3.5cm，413*295像素，jpg格式</div>
           <div class="text-2">上传时jpg文件命名为“姓名+证件照”）</div>
         </el-upload>
       </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button type="primary" @click="isDialogShow.addPicVisible = false"> 确认 </el-button>
-        </span>
-      </template>
     </el-dialog>
   </div>
 </template>
+
+<style scoped>
+/* 图片上传样式 */
+:deep(.avatar-uploader .el-upload) {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  padding: 0.5rem;
+}
+</style>

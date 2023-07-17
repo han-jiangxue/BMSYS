@@ -5,12 +5,14 @@ import { useUserStore } from "@/store/modules/user"
 import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { type FormInstance, FormRules } from "element-plus"
-import { getLoginCodeApi } from "@/api/login"
+import { getLoginCodeApi, getPublicKeyApi } from "@/api/login"
+import { rsaEncrypt } from "@/utils/encrypt"
 import { type LoginRequestData } from "@/api/login/types/login"
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
 const preloadedImages = ref<Array<HTMLImageElement>>([])
+const publicKey = ref("")
 const imgLists = [
   "https://www.cumt.edu.cn/_upload/article/images/3a/d1/7adb0a18490496898ac507219537/6b22aff9-552d-45d4-9eec-148f29f4a3d5.jpg",
   "https://www.cumt.edu.cn/_upload/article/images/9c/a8/9da085a548b9a3121a9318a71927/700b95a5-342e-4f99-b1eb-90c33f359980.jpg",
@@ -52,8 +54,9 @@ const handleLogin = () => {
       useUserStore()
         .login({
           idCardNumber: loginForm.idCardNumber,
-          password: loginForm.password,
+          password: rsaEncrypt(publicKey.value, loginForm.password),
           rememberMe: loginForm.rememberMe,
+          publicKey: publicKey.value,
           code: loginForm.code,
           uuid: loginForm.uuid
         })
@@ -95,9 +98,14 @@ const handleResetPassword = () => {
 /** 初始化验证码 */
 createCode()
 
-onMounted(() => {
+onMounted(async () => {
   preloadImages()
   startImageTransition()
+  await getPublicKeyApi().then((res: any) => {
+    if (res.code === 200) {
+      publicKey.value = res.data.publicKey
+    }
+  })
 })
 onBeforeUnmount(() => {
   if (intervalId) {
@@ -187,6 +195,10 @@ function startImageTransition() {
             <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin"> 登 录 </el-button>
           </el-form>
         </div>
+      </div>
+      <div class="fixed left-5% bottom-5% color-#5786BA text-5">
+        <div>意见反馈邮箱：fdycumt@163.com</div>
+        <div>工作单位：中国矿业大学党委学生工作部</div>
       </div>
     </div>
   </transition>

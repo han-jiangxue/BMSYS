@@ -21,6 +21,7 @@ interface LoginParams {
   rememberMe?: boolean
   code?: string
   uuid?: string
+  publicKey?: string
 }
 
 export interface RegisterParams {
@@ -30,6 +31,7 @@ export interface RegisterParams {
   realName: string
   code: string
   newPassword?: string
+  publicKey: string
 }
 
 export interface LogoutParams {
@@ -37,6 +39,7 @@ export interface LogoutParams {
   email: string
   code: string
   newPassword?: string
+  publicKey: string
 }
 
 export interface ResetPasswordParams {

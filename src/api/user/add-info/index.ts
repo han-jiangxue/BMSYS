@@ -6,7 +6,12 @@ enum Api {
   GetInfo = "/info/get",
   // 信息填报
   AddInfo = "/info/submit",
-  UpdateInfo = "/info/update"
+  // 更新填报
+  UpdateInfo = "/info/update",
+  // 获取图片
+  GetPicture = "/file/downloadPhoto",
+  // 导出文件
+  GetWordFile = "/file/downWord"
 }
 
 /**
@@ -63,5 +68,21 @@ export function updateInfoApi(data: AddInfo.AddInfoRequestData) {
     url: Api.UpdateInfo,
     method: "post",
     data
+  })
+}
+
+export function getPictureApi() {
+  return request({
+    url: Api.GetPicture,
+    method: "get",
+    responseType: "blob"
+  })
+}
+
+export function getWordFileApi() {
+  return request({
+    url: Api.GetWordFile,
+    method: "get",
+    responseType: "blob"
   })
 }

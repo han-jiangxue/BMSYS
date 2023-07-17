@@ -30,7 +30,7 @@ const formData = reactive({
   modifyDate: "",
   link: "",
   issued: "",
-  visible: "1",
+  visible: "0",
   announcementId: ""
 })
 const formRef = ref<FormInstance | null>(null)
@@ -168,8 +168,11 @@ const handleSearch = async () => {
 }
 
 const handleDelete = (id: any) => {
-  deleteNoticeAPI({
-    id
+  deleteNoticeAPI(id).then((res: any) => {
+    if (res.code === 200) {
+      ElMessage.success("删除成功")
+      getTableData()
+    }
   })
 }
 

@@ -4,8 +4,9 @@ import { useRouter } from "vue-router"
 import { User, Lock, Key, Message, Avatar } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { type FormInstance, FormRules, ElMessage } from "element-plus"
-import { getEmailCodeApi, registerApi } from "@/api/login"
+import { getEmailCodeApi, registerApi, getPublicKeyApi } from "@/api/login"
 import { type RegisterParams } from "@/api/login/types/login"
+import { rsaEncrypt } from "@/utils/encrypt"
 
 const router = useRouter()
 const registerFormRef = ref<FormInstance | null>(null)
@@ -29,7 +30,8 @@ const registerForm: RegisterParams = reactive({
   realName: "",
   email: "",
   code: "",
-  newPassword: ""
+  newPassword: "",
+  publicKey: ""
 })
 /** 登录表单校验规则 */
 const registerFormRules: FormRules = {
@@ -54,6 +56,11 @@ const handleRegister = () => {
   registerFormRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
+      if (registerForm.password !== registerForm.newPassword) {
+        ElMessage.warning("请确保两次密码一致")
+        return
+      }
+      registerForm.password = rsaEncrypt(registerForm.publicKey, registerForm.password)
       registerApi(registerForm, {
         code: `${registerForm.code}/${registerForm.email}`
       })
@@ -89,9 +96,14 @@ const getEmailCode = async () => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   preloadImages()
   startImageTransition()
+  await getPublicKeyApi().then((res: any) => {
+    if (res.code === 200) {
+      registerForm.publicKey = res.data.publicKey
+    }
+  })
 })
 onBeforeUnmount(() => {
   if (intervalId) {
