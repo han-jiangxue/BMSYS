@@ -120,7 +120,7 @@ function getMaritalStatusLabel(taskStatus: any) {
 
 const handelReview = (idCardNumber: number, reviewStatus: number) => {
   const params = { idCardNumber, reviewStatus }
-  reviewAPI(params)
+  reviewAPI([params])
 }
 
 const getDetail = async (row: any) => {
