@@ -11,7 +11,9 @@ enum Api {
   // 修改任务
   EditTask = "/task/updateTask",
   // 开启任务
-  OpenTask = "/task/startTask"
+  OpenTask = "/task/startTask",
+  // 上传文件
+  AddFile = "/exam-info-stu/uploadWordFile"
 }
 
 export function getFillingTaskApi(params: any) {
@@ -50,6 +52,17 @@ export function editTaskApi(data: Filling.EditFillingTaskParams) {
   return request({
     url: Api.EditTask,
     method: "post",
+    data
+  })
+}
+
+export function addFileAPI(data: any) {
+  return request({
+    url: Api.AddFile,
+    method: "post",
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
     data
   })
 }

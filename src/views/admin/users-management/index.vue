@@ -1,8 +1,18 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch, reactive } from "vue"
-import { type FormInstance, ElMessage, ElPopconfirm, ElDescriptionsItem, ElDescriptions } from "element-plus"
-import { getAddInfoApi, reviewAPI, deleteApi, searchApi, getDetailApi } from "@/api/admin/users-management"
+import { type FormInstance, ElMessage, ElPopconfirm, ElDescriptionsItem, ElDescriptions, ElLoading } from "element-plus"
+import {
+  getAddInfoApi,
+  reviewAPI,
+  deleteApi,
+  searchApi,
+  getDetailApi,
+  getExcelFileApi,
+  getZipFileApi
+} from "@/api/admin/users-management"
 import { usePagination } from "@/hooks/usePagination"
+import { Download } from "@element-plus/icons-vue"
+import { saveAs } from "file-saver"
 
 /* 管理员账号 */
 
@@ -165,6 +175,42 @@ const handleSearch = async () => {
   await getTableSearchData()
 }
 
+const handleExportWord = async () => {
+  const downloadLoadingInstance = ElLoading.service({
+    text: "正在下载文件，请稍候",
+    lock: true,
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    const response: any = await getExcelFileApi()
+    saveAs(response, `汇总表.xlsx`)
+    downloadLoadingInstance.close()
+    ElMessage.success("文件下载完成")
+  } catch (error) {
+    console.error("导出Excel文件出错", error)
+    ElMessage.error("下载文件出现错误！")
+    downloadLoadingInstance.close()
+  }
+}
+
+const handleExportZip = async (data: any) => {
+  const downloadLoadingInstance = ElLoading.service({
+    text: "正在下载文件，请稍候",
+    lock: true,
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    const response: any = await getZipFileApi({ id: data.idCardNumber })
+    saveAs(response, `${data.realName}.zip`)
+    downloadLoadingInstance.close()
+    ElMessage.success("压缩包下载完成")
+  } catch (error) {
+    console.error("导出文件出错", error)
+    ElMessage.error("下载压缩包出现错误！")
+    downloadLoadingInstance.close()
+  }
+}
+
 /** 监听分页参数的变化 */
 watch(
   [() => paginationData.currentPage, () => paginationData.pageSize],
@@ -205,6 +251,9 @@ onMounted(async () => {
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :icon="Download" @click="handleExportWord">导出Excel表</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -268,6 +317,7 @@ onMounted(async () => {
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template #default="scope">
               <el-button type="primary" text bg size="small" @click="getDetail(scope.row)">详情</el-button>
+              <el-button type="primary" text bg size="small" @click="handleExportZip(scope.row)">下载</el-button>
               <el-popconfirm
                 title="确认删除该任务吗？"
                 confirm-button-text="确认"

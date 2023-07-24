@@ -3,19 +3,18 @@ import { onMounted, ref, watch, reactive } from "vue"
 import { type FormInstance, ElMessage, ElPopconfirm, ElLoading } from "element-plus"
 import { Download } from "@element-plus/icons-vue"
 import {
-  getNoticeBasedYearAPI,
-  addNoticeAPI,
-  editNoticeAPI,
-  getNoticeBasedTitleAPI,
-  deleteNoticeAPI
-} from "@/api/admin/notice-management"
-import { getScoreAPI, importScoreAPI, getExamTaskAPI } from "@/api/admin/score-management"
+  getScoreAPI,
+  importScoreAPI,
+  getExamTaskAPI,
+  deleteScoreAPI,
+  addScoreAPI,
+  editScoreAPI
+} from "@/api/admin/score-management"
 import { usePagination } from "@/hooks/usePagination"
-import { formatDateTime } from "@/utils"
+// import { formatDateTime } from "@/utils"
 
-// TODU: 删除、分页
+// TODU: 新增
 const loading = ref<boolean>(false)
-const isSearch = ref<boolean>(false)
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
 const tableData = ref<any>([])
 const searchFormRef = ref<FormInstance | null>(null)
@@ -23,32 +22,30 @@ const dialogVisible = ref<boolean>(false)
 const currentUpdateId = ref<undefined | number>(undefined)
 const examTaskId = ref()
 const searchData = reactive({
-  year: new Date().getFullYear(),
-  title: ""
+  isMatch: "",
+  name: ""
 })
 const formData = reactive({
-  title: "",
-  createDate: "",
-  modifyDate: "",
-  link: "",
-  issued: "",
-  visible: "0",
-  announcementId: ""
+  idCardNumber: "",
+  realName: "",
+  fillingTaskId: "",
+  score: "",
+  achievementId: ""
 })
 const formRef = ref<FormInstance | null>(null)
 
 const getTableData = () => {
-  if (isSearch.value) {
-    return
-  }
   loading.value = true
   getScoreAPI({
-    taskId: `${examTaskId.value}`
+    taskId: `${examTaskId.value}`,
+    current: paginationData.currentPage,
+    size: paginationData.pageSize,
+    ...searchData
   })
     .then((res: any) => {
-      // paginationData.total = res.data.data.total
+      paginationData.total = res.data.total
 
-      tableData.value = res.data
+      tableData.value = res.data.records
     })
     .catch(() => {
       tableData.value = []
@@ -58,73 +55,26 @@ const getTableData = () => {
     })
 }
 
-const getTableSearchData = () => {
-  if (!isSearch.value) {
-    return
-  }
-  loading.value = true
-  if (!searchData.title) {
-    getNoticeBasedYearAPI({
-      current: paginationData.currentPage,
-      size: paginationData.pageSize,
-      year: searchData.year
-    })
-      .then((res: any) => {
-        paginationData.total = res.data.total
-        tableData.value = res.data.records
-      })
-      .catch(() => {
-        tableData.value = []
-      })
-      .finally(() => {
-        loading.value = false
-      })
-  } else {
-    getNoticeBasedTitleAPI({
-      current: paginationData.currentPage,
-      size: paginationData.pageSize,
-      title: searchData.title
-    })
-      .then((res: any) => {
-        paginationData.total = res.data.total
-        tableData.value = res.data.records
-      })
-      .catch(() => {
-        tableData.value = []
-      })
-      .finally(() => {
-        loading.value = false
-      })
-  }
-}
-
 const resetForm = () => {
   currentUpdateId.value = undefined
-  formData.title = ""
-  formData.issued = ""
-  formData.createDate = ""
-  formData.modifyDate = ""
-  formData.link = ""
-  formData.visible = "1"
-  formData.announcementId = ""
+  formData.idCardNumber = ""
+  formData.realName = ""
+  formData.score = ""
 }
 
 const handleUpdate = (row: any) => {
-  currentUpdateId.value = row.announcementId
-  formData.announcementId = row.announcementId
-  formData.title = row.title
-  formData.issued = row.issued
-  formData.createDate = row.createDate
-  formData.modifyDate = row.modifyDate
-  formData.link = row.link
-  formData.visible = row.visible
+  currentUpdateId.value = row.achievementId
+  formData.idCardNumber = row.idCardNumber
+  formData.achievementId = row.achievementId
+  formData.realName = row.realName
+  formData.score = row.score
   dialogVisible.value = true
 }
 
 const resetSearch = () => {
-  isSearch.value = false
   searchFormRef.value?.resetFields()
-  searchData.title = ""
+  searchData.name = ""
+  searchData.isMatch = ""
   if (paginationData.currentPage === 1) {
     getTableData()
   }
@@ -143,16 +93,16 @@ function getStatusLabel(taskStatus: any) {
 const handleCreate = () => {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
-      formData.createDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
-      formData.modifyDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
+      // formData.createDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
+      // formData.modifyDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
       if (currentUpdateId.value === undefined) {
-        addNoticeAPI(formData).then(() => {
+        addScoreAPI(formData).then(() => {
           ElMessage.success("新增成功")
           dialogVisible.value = false
           getTableData()
         })
       } else {
-        editNoticeAPI(formData).then(() => {
+        editScoreAPI(formData).then(() => {
           ElMessage.success("修改成功")
           dialogVisible.value = false
           getTableData()
@@ -164,16 +114,13 @@ const handleCreate = () => {
   })
 }
 
-const handleSearch = async () => {
-  isSearch.value = true
-  await getTableSearchData()
-}
-
 const handleDelete = (id: any) => {
-  deleteNoticeAPI(id).then((res: any) => {
+  deleteScoreAPI({ id }).then((res: any) => {
     if (res.code === 200) {
       ElMessage.success("删除成功")
       getTableData()
+    } else {
+      ElMessage.warning(res.message)
     }
   })
 }
@@ -207,6 +154,7 @@ const handleUpload = async (res: any) => {
 onMounted(() => {
   getExamTaskAPI().then((res: any) => {
     examTaskId.value = res.data.examTaskId
+    formData.fillingTaskId = res.data.examTaskId
     getTableData()
   })
 })
@@ -216,7 +164,6 @@ watch(
   [() => paginationData.currentPage, () => paginationData.pageSize],
   () => {
     getTableData()
-    getTableSearchData()
   },
   {
     immediate: true
@@ -228,17 +175,17 @@ watch(
   <div class="app-container">
     <el-card v-loading="loading" class="search-wrapper">
       <el-form ref="searchFormRef" :inline="true">
-        <el-form-item prop="taskName" label="姓名">
-          <el-input v-model="searchData.title" placeholder="请输入姓名" clearable />
+        <el-form-item prop="name" label="姓名">
+          <el-input v-model="searchData.name" placeholder="请输入姓名" clearable />
         </el-form-item>
-        <el-form-item label="年份">
+        <!-- <el-form-item label="年份">
           <el-select v-model="searchData.year" placeholder="请选择年份" clearable>
             <el-option label="2023" :value="2023" />
             <el-option label="2022" :value="2022" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="是否匹配">
-          <el-select v-model="searchData.year" placeholder="请选择" clearable>
+          <el-select v-model="searchData.isMatch" placeholder="请选择" clearable>
             <el-option label="匹配" :value="1" />
             <el-option label="不匹配" :value="0" />
           </el-select>
@@ -247,10 +194,10 @@ watch(
           <el-upload :show-file-list="false" :http-request="handleUpload">
             <el-button type="primary" :icon="Download">导入Excel表</el-button>
           </el-upload>
-          <!-- <el-button @click="dialogVisible = true">新增公告</el-button> -->
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="dialogVisible = true">新增</el-button>
+          <el-button type="primary" @click="getTableData">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
@@ -273,10 +220,10 @@ watch(
             <template #default="scope">
               <el-button type="primary" text bg size="small" @click="handleUpdate(scope.row)">编辑</el-button>
               <el-popconfirm
-                title="确认删除该公告吗？"
+                title="确认删除该记录吗？"
                 confirm-button-text="确认"
                 cancel-button-text="取消"
-                @confirm="handleDelete(scope.row.announcementId)"
+                @confirm="handleDelete(scope.row.achievementId)"
               >
                 <template #reference>
                   <el-button type="danger" text bg size="small">删除</el-button>
@@ -302,33 +249,27 @@ watch(
     <!-- 新增/修改 -->
     <el-dialog
       v-model="dialogVisible"
-      :title="currentUpdateId === undefined ? '新增公告' : '修改公告'"
+      :title="currentUpdateId === undefined ? '新增成绩' : '修改成绩'"
       @close="resetForm"
       draggable
       width="30%"
     >
       <el-form ref="formRef" :model="formData" label-width="100px" label-position="left">
-        <el-form-item prop="task" label="公告标题">
-          <el-input type="textarea" v-model="formData.title" placeholder="请输入公告标题" />
+        <el-form-item prop="realName" label="姓名">
+          <el-input v-model="formData.realName" placeholder="请输入姓名" />
         </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker v-model="formData.createDate" type="datetime" placeholder="请选择时间" />
+        <el-form-item prop="idCardNumber" label="身份证号">
+          <el-input v-model="formData.idCardNumber" placeholder="请输入身份证号" />
         </el-form-item>
-        <el-form-item label="更新时间" v-if="currentUpdateId !== undefined">
-          <el-date-picker v-model="formData.modifyDate" type="datetime" placeholder="请选择时间" />
+        <el-form-item prop="score" label="成绩">
+          <el-input v-model="formData.score" placeholder="请输入成绩" />
         </el-form-item>
-        <el-form-item prop="link" label="超链接">
-          <el-input v-model="formData.link" placeholder="请输入超链接" />
-        </el-form-item>
-        <el-form-item prop="issued" label="发布单位">
-          <el-input v-model="formData.issued" placeholder="请输入发布单位" />
-        </el-form-item>
-        <el-form-item label="是否可见">
+        <!-- <el-form-item label="是否可见">
           <el-radio-group v-model="formData.visible">
             <el-radio label="0">可见</el-radio>
             <el-radio label="1">不可见</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>

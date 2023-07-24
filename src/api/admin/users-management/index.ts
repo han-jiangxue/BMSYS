@@ -11,7 +11,11 @@ enum Api {
   // 搜索
   Search = "/exam/info/search",
   // 详情
-  GetDetail = "/exam/details"
+  GetDetail = "/exam/details",
+  // 导出Excel
+  GetExcel = "/file/downExcel",
+  // 下载压缩包
+  GetZip = "/file/downloadArchive"
 }
 
 export function getAddInfoApi(data: any) {
@@ -55,5 +59,22 @@ export function searchApi(data: Users.SearchUserParams) {
       idCardNumber: data.idCardNumber,
       realName: data.realName
     }
+  })
+}
+
+export function getExcelFileApi() {
+  return request({
+    url: Api.GetExcel,
+    method: "get",
+    responseType: "blob"
+  })
+}
+
+export function getZipFileApi(params: any) {
+  return request({
+    url: Api.GetZip,
+    method: "get",
+    params,
+    responseType: "blob"
   })
 }

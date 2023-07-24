@@ -11,7 +11,9 @@ enum Api {
   // 获取图片
   GetPicture = "/file/downloadPhoto",
   // 导出文件
-  GetWordFile = "/file/downWord"
+  GetWordFile = "/file/downWord",
+  // 获取状态
+  GetRegistrationStatue = "/info/getReviewInfo"
 }
 
 /**
@@ -84,5 +86,12 @@ export function getWordFileApi() {
     url: Api.GetWordFile,
     method: "get",
     responseType: "blob"
+  })
+}
+
+export function getRegistrationStatueApi() {
+  return request({
+    url: Api.GetRegistrationStatue,
+    method: "get"
   })
 }

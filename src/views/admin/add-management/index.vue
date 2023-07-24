@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { ref, watch, reactive, onMounted } from "vue"
-import { type FormInstance, type FormRules, ElMessage, ElPopconfirm } from "element-plus"
+import { type FormInstance, type FormRules, ElMessage, ElPopconfirm, ElLoading } from "element-plus"
 import {
   getFillingTaskApi,
   addFillingTaskApi,
   deleteTaskApi,
   editTaskApi,
-  openTaskApi
+  openTaskApi,
+  addFileAPI
 } from "@/api/admin/add-management"
 import { formatDateTime } from "@/utils"
 import { usePagination } from "@/hooks/usePagination"
@@ -81,6 +82,20 @@ function getStatusLabel(taskStatus: any) {
   return statusMap[taskStatus as number] || "未知状态"
 }
 
+const reverseFormatDateTime = (timeString: string) => {
+  const regex = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})$/
+  const match = timeString.match(regex)
+
+  if (!match) {
+    return timeString
+  }
+
+  const datePart = match[1]
+  const timePart = match[2]
+
+  return `${datePart} ${timePart}`
+}
+
 async function open(id: string) {
   await openTaskApi({ taskId: id })
     .then((res: any) => {
@@ -153,6 +168,31 @@ const handleCreate = () => {
   })
 }
 
+const handleUpload = async (res: any) => {
+  const uploadLoadingInstance = ElLoading.service({
+    text: "正在导入文件，请稍候",
+    lock: true,
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  const form = new FormData()
+  form.append("file", res.file)
+  await addFileAPI(form)
+    .then((res: any) => {
+      if (res.code === 200) {
+        formData.attachmentPath = res.data
+        ElMessage.success(res.message)
+        uploadLoadingInstance.close()
+      } else {
+        ElMessage.warning(res.message)
+        uploadLoadingInstance.close()
+      }
+    })
+    .catch((err: any) => {
+      console.error(err)
+      uploadLoadingInstance.close()
+    })
+}
+
 /** 监听分页参数的变化 */
 watch(
   [() => paginationData.currentPage, () => paginationData.pageSize],
@@ -180,7 +220,7 @@ onMounted(() => {
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
-          <el-button @click="dialogVisible = true">新增考试任务</el-button>
+          <el-button @click="dialogVisible = true">新增填报任务</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -189,8 +229,16 @@ onMounted(() => {
         <el-table :data="tableData">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="task" label="任务名称" align="center" />
-          <el-table-column prop="startTime" label="开始时间" align="center" />
-          <el-table-column prop="endTime" label="截至时间" align="center" />
+          <el-table-column prop="startTime" label="开始时间" align="center">
+            <template #default="scope">
+              {{ reverseFormatDateTime(scope.row.startTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="endTime" label="截至时间" align="center">
+            <template #default="scope">
+              {{ reverseFormatDateTime(scope.row.endTime) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="taskStatus" label="状态" align="center">
             <template #default="scope">
               {{ getStatusLabel(scope.row.taskStatus) }}
@@ -270,7 +318,10 @@ onMounted(() => {
           <el-input v-model="formData.remark" placeholder="请输入备注" />
         </el-form-item>
         <el-form-item prop="attachmentPath" label="附件">
-          <el-input v-model="formData.attachmentPath" placeholder="请输入附件路径" />
+          <el-upload :show-file-list="false" :http-request="handleUpload">
+            <el-button v-if="!formData.attachmentPath" type="primary">上传附件</el-button>
+            <el-button v-else type="primary">重新上传</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <template #footer>

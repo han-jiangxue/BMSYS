@@ -17,7 +17,7 @@ export function getExamTaskApi() {
 export function getScoreApi(params: any) {
   return request({
     url: Api.GetScore,
-    method: "post",
+    method: "get",
     params
   })
 }
