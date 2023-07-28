@@ -24,6 +24,10 @@ const handleSkip = (url: string) => {
   router.push({ path: `/${url}` })
 }
 
+const handleRedirect = (externalURL: string) => {
+  window.location.href = externalURL
+}
+
 onMounted(async () => {
   const res: any = await getGetAllNoticeAPI({
     current: 1,
@@ -82,7 +86,8 @@ onMounted(async () => {
           <div v-if="NoticeList" class="overflow-y-auto h-90%">
             <div v-for="(item, index) in NoticeList" :key="index" class="flex justify-center">
               <div
-                class="border border-#fff border-dashed w-60% h-6 color-#212529 font-600 items-center flex justify-center"
+                class="border border-#fff border-dashed w-60% h-6 @hover:cursor-pointer color-#212529 font-600 items-center flex justify-center"
+                @click="handleRedirect(item.link)"
               >
                 {{ item?.title }}
               </div>

@@ -33,14 +33,27 @@ function createService() {
         case 200:
           // 本系统采用 code === 200 来表示没有业务错误
           return apiData
-        case 401:
+        case -1:
+          // token过期
           useUserStoreHook().logout()
           location.reload()
           break
+        // case 401:
+        //   // token缺失
+        //   if (apiData.code.message === "token缺失" || apiData.code.message === "非法token") {
+        //     ElMessage.error(apiData.message || "Error")
+        //     useUserStoreHook().logout()
+        //     location.reload()
+        //   }
+        //   ElMessage.error(apiData.message || "Error")
+        //   return Promise.reject(new Error("Error"))
         default:
           // 不是正确的 code
           ElMessage.error(apiData.message || "Error")
-          return Promise.reject(new Error("Error"))
+          Promise.reject(new Error("Error"))
+
+          // return Promise.reject(new Error("Error"))
+          return apiData
       }
     },
     (error) => {
@@ -102,7 +115,7 @@ function createRequest(service: AxiosInstance) {
         token: token ? token : undefined,
         "Content-Type": "application/json"
       },
-      timeout: 12000,
+      timeout: 60000,
       baseURL: import.meta.env.VITE_BASE_API,
       data: {}
     }

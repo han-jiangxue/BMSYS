@@ -31,6 +31,7 @@ export const useUserStore = defineStore("user", () => {
         code: `${code}/${uuid}`
       }
     )
+
     setToken(data.token)
     token.value = data.token
     userInfo.value = data.user_info

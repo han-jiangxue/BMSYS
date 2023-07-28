@@ -10,6 +10,7 @@ import { getLocation, getPositionArray } from "@/utils/location"
 import type { AddInfoRequestData, GetInfoResponseData } from "@/api/user/add-info/types"
 import type { UserInfoData } from "@/api/login/types/login"
 import { saveAs } from "file-saver"
+import { getRegistrationStatueApi } from "@/api/user/add-info"
 
 // TODU: 空值校验
 
@@ -26,11 +27,23 @@ const isDialogShow = ref({
 
 async function init() {
   isLoaded.value = false
+  getRegistrationStatueApi().then((res: any) => {
+    registerStatue.value = res?.data
+  })
   userInfo.value = { ...(await getUserInfoApi()).data }
+  // if (registerStatue.value?.fillingStatus === 2) {
+  //   const res: GetInfoResponseData = await getInfoAPI()
+  //   Object.assign(infoForm, res.data)
+  //   infoForm.position = getPositionArray(infoForm.position, regionData)
+  // }
   const res: GetInfoResponseData = await getInfoAPI()
   Object.assign(infoForm, res.data)
-  infoForm.position = getPositionArray(infoForm.position, regionData)
-  getPicUrl()
+  if (infoForm.position) {
+    infoForm.position = getPositionArray(infoForm.position, regionData)
+  }
+  if (registerStatue.value?.hasPhoto) {
+    getPicUrl()
+  }
   isLoaded.value = true
 }
 
@@ -135,6 +148,23 @@ watchEffect(() => {
     isDialogShow.value.otherLeverVisible = true
   }
 })
+
+interface registerStatueType {
+  attachmentPath: string
+  cancelReason: string
+  createTime: string
+  examInfoId: string
+  examStatus: number
+  reviewStatus: number
+  fillingStatus: number
+  fillingDate: string
+  photoPath: string
+  userId: string
+  hasAttachment: boolean
+  hasPhoto: boolean
+}
+
+const registerStatue = ref<registerStatueType>()
 
 onMounted(async () => {
   init()
@@ -307,10 +337,10 @@ onMounted(async () => {
         </el-form>
         <el-form :inline="true">
           <el-form-item>
-            <el-button type="primary" class="w-60" @click="isDialogShow.addPicVisible = true">头像上传</el-button>
+            <el-button type="primary" class="w-60" @click="handleSubmit('submit')">保存</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="w-60" @click="handleSubmit('submit')">提交</el-button>
+            <el-button type="primary" class="w-60" @click="isDialogShow.addPicVisible = true">头像上传</el-button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" class="w-60" @click="handleSubmit('update')">更新</el-button>
@@ -352,6 +382,8 @@ onMounted(async () => {
       align-center
       center
     >
+      <div class="flex items-center justify-center mt--2 mb-2">注意：请保存后再上传图片</div>
+
       <div class="flex w-100% justify-center">
         <el-upload
           class="avatar-uploader"

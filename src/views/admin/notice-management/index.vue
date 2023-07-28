@@ -112,11 +112,15 @@ const handleUpdate = (row: any) => {
   formData.announcementId = row.announcementId
   formData.title = row.title
   formData.issued = row.issued
-  formData.createDate = row.createDate
-  formData.modifyDate = row.modifyDate
+  formData.modifyDate = row.modifyDate || new Date()
   formData.link = row.link
   formData.visible = row.visible
   dialogVisible.value = true
+}
+
+const handleCreateDialogVisible = () => {
+  dialogVisible.value = true
+  formData.createDate = new Date() as unknown as string
 }
 
 const resetSearch = () => {
@@ -142,12 +146,14 @@ const handleCreate = () => {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
       formData.createDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
-      formData.modifyDate = formatDateTime(formData.createDate, "YYYY-MM-DD HH:mm:ss")
+      formData.modifyDate = formatDateTime(new Date(), "YYYY-MM-DD HH:mm:ss")
       if (currentUpdateId.value === undefined) {
-        addNoticeAPI(formData).then(() => {
-          ElMessage.success("新增成功")
-          dialogVisible.value = false
-          getTableData()
+        addNoticeAPI(formData).then((res: any) => {
+          if (res.code === 200) {
+            ElMessage.success("新增成功")
+            dialogVisible.value = false
+            getTableData()
+          }
         })
       } else {
         editNoticeAPI(formData).then(() => {
@@ -213,7 +219,7 @@ onMounted(() => {
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
-          <el-button @click="dialogVisible = true">新增公告</el-button>
+          <el-button @click="handleCreateDialogVisible">新增公告</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -273,7 +279,7 @@ onMounted(() => {
         <el-form-item prop="task" label="公告标题">
           <el-input type="textarea" v-model="formData.title" placeholder="请输入公告标题" />
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="创建时间" v-if="currentUpdateId === undefined">
           <el-date-picker v-model="formData.createDate" type="datetime" placeholder="请选择时间" />
         </el-form-item>
         <el-form-item label="更新时间" v-if="currentUpdateId !== undefined">

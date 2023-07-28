@@ -319,7 +319,7 @@ onMounted(() => {
         </el-form-item>
         <el-form-item prop="attachmentPath" label="附件">
           <el-upload :show-file-list="false" :http-request="handleUpload">
-            <el-button v-if="!formData.attachmentPath" type="primary">上传附件</el-button>
+            <el-button v-if="!formData.attachmentPath" type="primary">上传Word附件</el-button>
             <el-button v-else type="primary">重新上传</el-button>
           </el-upload>
         </el-form-item>

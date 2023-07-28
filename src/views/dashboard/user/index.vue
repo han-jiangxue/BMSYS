@@ -3,6 +3,7 @@
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { getAllNoticeAPI } from "@/api/user/notice-info"
+import { getRegistrationStatueApi } from "@/api/user/add-info"
 import { useUserStore } from "@/store/modules/user"
 
 interface NoticeListType {
@@ -10,6 +11,21 @@ interface NoticeListType {
   link: string
   modifyDate: string
   title: string
+}
+
+interface registerStatueType {
+  attachmentPath: string
+  cancelReason: string
+  createTime: string
+  examInfoId: string
+  examStatus: number
+  reviewStatus: number
+  fillingStatus: number
+  fillingDate: string
+  photoPath: string
+  userId: string
+  hasAttachment: boolean
+  hasPhoto: boolean
 }
 
 const router = useRouter()
@@ -24,9 +40,18 @@ const handleSkip = (url: string) => {
   router.push({ path: `/${url}` })
 }
 
+const handleRedirect = (externalURL: string) => {
+  window.location.href = externalURL
+}
+
+const registerStatue = ref<registerStatueType>()
+
 onMounted(async () => {
   const res: any = await getAllNoticeAPI()
   NoticeList.value = res.data
+  await getRegistrationStatueApi().then((res: any) => {
+    registerStatue.value = res.data
+  })
 })
 </script>
 
@@ -48,7 +73,11 @@ onMounted(async () => {
             </div>
             <div class="flex-col items-center justify-center flex">
               <div
-                class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+                class="rounded-8 p-6 justify-center w-30 h-30 m-4 font-800"
+                :class="{
+                  'bg-#4076B1': registerStatue?.fillingStatus === 2,
+                  'bg-white': registerStatue?.fillingStatus !== 2
+                }"
                 @click="handleSkip('submit-info')"
               >
                 上传填报
@@ -59,7 +88,7 @@ onMounted(async () => {
           </div>
           <div class="flex justify-start items-center">
             <div
-              class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+              class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#FFF font-800"
               @click="handleSkip('result-search')"
             >
               结果查询
@@ -67,7 +96,11 @@ onMounted(async () => {
             <div class="triangle-left" />
             <div class="w-8 h-8 bg-#FFF" />
             <div
-              class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+              class="rounded-8 p-6 justify-center w-30 h-30 m-4 font-800"
+              :class="{
+                'bg-#4076B1': registerStatue?.examStatus === 2,
+                'bg-white': registerStatue?.examStatus !== 2
+              }"
               @click="handleSkip('exam-confirm')"
             >
               考试确认
@@ -79,7 +112,8 @@ onMounted(async () => {
           <div v-if="NoticeList" class="overflow-y-auto h-90%">
             <div v-for="(item, index) in NoticeList" :key="index" class="flex justify-center">
               <div
-                class="border border-#fff border-dashed w-60% h-6 color-#212529 font-600 items-center flex justify-center"
+                class="border border-#fff border-dashed w-60% @hover:cursor-pointer h-6 color-#212529 font-600 items-center flex justify-center"
+                @click="handleRedirect(item.link)"
               >
                 {{ item?.title }}
               </div>
@@ -89,11 +123,6 @@ onMounted(async () => {
                 {{ item?.modifyDate }}
               </div>
             </div>
-            <!-- <el-descriptions border :column="1" v-if="NoticeList" class="overflow-y-auto">
-              <div v-for="(item, index) in NoticeList" :key="index">
-                <el-descriptions-item :label="item?.title">{{ item?.modifyDate }}</el-descriptions-item>
-              </div>
-            </el-descriptions> -->
           </div>
         </div>
       </div>
