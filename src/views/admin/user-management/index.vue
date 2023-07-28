@@ -123,16 +123,20 @@ const handleCreate = () => {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
       if (currentUpdateId.value === undefined) {
-        addUserApi(formData).then(() => {
-          ElMessage.success("新增成功")
-          dialogVisible.value = false
-          getTableData()
+        addUserApi(formData).then((res: any) => {
+          if (res.code === 200) {
+            ElMessage.success("新增成功")
+            dialogVisible.value = false
+            getTableData()
+          }
         })
       } else {
-        editUserApi(formData).then(() => {
-          ElMessage.success("修改成功")
-          dialogVisible.value = false
-          getTableData()
+        editUserApi(formData).then((res: any) => {
+          if (res.code === 200) {
+            ElMessage.success("修改成功")
+            dialogVisible.value = false
+            getTableData()
+          }
         })
       }
     } else {

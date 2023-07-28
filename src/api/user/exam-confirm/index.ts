@@ -4,7 +4,9 @@ enum Api {
   // 确认考试
   ExamConfirm = "/examTask/confirm",
   // 取消考试
-  ExamCancel = "/examTask/cancel"
+  ExamCancel = "/examTask/cancel",
+  // 获取考试任务
+  GetExamTask = "/examTask/getExamInfo"
 }
 
 export function examConfirmApi() {
@@ -19,5 +21,12 @@ export function examCancelApi(params: any) {
     url: Api.ExamCancel,
     method: "get",
     params
+  })
+}
+
+export function getExamTaskAPI() {
+  return request({
+    url: Api.GetExamTask,
+    method: "get"
   })
 }

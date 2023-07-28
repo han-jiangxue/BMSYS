@@ -1,10 +1,26 @@
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { examConfirmApi, examCancelApi } from "@/api/user/exam-confirm"
+import { getRegistrationStatueApi } from "@/api/user/add-info"
 import { ElMessage } from "element-plus"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
+
+interface registerStatueType {
+  attachmentPath: string
+  cancelReason: string
+  createTime: string
+  examInfoId: string
+  examStatus: number
+  reviewStatus: number
+  fillingStatus: number
+  fillingDate: string
+  photoPath: string
+  userId: string
+  hasAttachment: boolean
+  hasPhoto: boolean
+}
 
 const dialogVisible = ref({
   isDialogVisible: true,
@@ -12,6 +28,7 @@ const dialogVisible = ref({
   cancelDialogVisible: false
 })
 const cancelReason = ref("")
+const registerStatue = ref<registerStatueType>()
 
 const handleConfirm = async () => {
   await examConfirmApi().then((res: any) => {
@@ -42,6 +59,18 @@ const handleCancel = async () => {
     }
   })
 }
+
+onMounted(async () => {
+  await getRegistrationStatueApi().then((res: any) => {
+    registerStatue.value = res.data
+  })
+  if (registerStatue.value?.reviewStatus !== 3) {
+    ElMessage.warning("填报审核通过后方可进入")
+    setTimeout(() => {
+      router.push({ path: "/dashboard" })
+    }, 2000)
+  }
+})
 </script>
 
 <template>

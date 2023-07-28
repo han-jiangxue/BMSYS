@@ -1,11 +1,31 @@
 <script lang="ts" setup>
 import { ElMessage, ElMessageBox, ElDialog, ElLoading } from "element-plus"
-import { ref, Ref } from "vue"
+import { ref, Ref, onMounted } from "vue"
 import { getToken } from "@/utils/cache/cookies"
-import { confirmUploadApi } from "@/api/user/submit-info"
+import { confirmUploadApi, getAddTaskApi, getFileApi } from "@/api/user/submit-info"
+import { getRegistrationStatueApi } from "@/api/user/add-info"
 import { useRouter } from "vue-router"
+import { saveAs } from "file-saver"
 
 const router = useRouter()
+
+interface registerStatueType {
+  attachmentPath: string
+  cancelReason: string
+  createTime: string
+  examInfoId: string
+  examStatus: number
+  reviewStatus: number
+  fillingStatus: number
+  fillingDate: string
+  photoPath: string
+  userId: string
+  hasAttachment: boolean
+  hasPhoto: boolean
+}
+
+const registerStatue = ref<registerStatueType>()
+const addTask = ref()
 
 const uploadUrl = import.meta.env.VITE_BASE_API + "/file/uploadArchive"
 const token = getToken()
@@ -93,13 +113,44 @@ const handleSubmit = () => {
       })
     })
 }
+
+const handleExportWord = async () => {
+  const downloadLoadingInstance = ElLoading.service({
+    text: "正在下载文件，请稍候",
+    lock: true,
+    background: "rgba(0, 0, 0, 0.7)"
+  })
+  try {
+    const response: any = await getFileApi({ path: addTask.value.attachmentPath })
+    saveAs(response, `填报要求说明书.doc`)
+    downloadLoadingInstance.close()
+    ElMessage.success("文件下载完成")
+  } catch (error) {
+    console.error("导出Word文件出错", error)
+    ElMessage.error("下载文件出现错误！")
+    downloadLoadingInstance.close()
+  }
+}
+
+onMounted(async () => {
+  await getRegistrationStatueApi().then((res: any) => {
+    registerStatue.value = res.data
+  })
+  await getAddTaskApi().then((res: any) => {
+    if (res.code === 200) {
+      addTask.value = res.data
+    }
+  })
+})
 </script>
 
 <template>
   <div class="h-full flex justify-center items-center">
     <el-dialog v-model="dialogVisible" title="上传填报" draggable width="40%" center>
       <div class="flex items-center justify-center flex-col">
-        <div class="color-black mb-4 @hover:cursor-pointer">请下载上传填报要求说明书依据要求格式上传</div>
+        <div class="color-black mb-4 underline @hover:cursor-pointer @hover:color-blue" @click="handleExportWord">
+          请点击此处下载上传填报要求说明书
+        </div>
         <el-upload
           class="avatar-uploader"
           :show-file-list="true"
@@ -111,7 +162,8 @@ const handleSubmit = () => {
           :on-error="handleError"
           :headers="{ token: token }"
         >
-          <el-icon class="text-40!"><upload-filled /></el-icon>
+          <el-icon v-if="!registerStatue?.hasAttachment" class="text-40!"><upload-filled /></el-icon>
+          <el-icon v-if="registerStatue?.hasAttachment" class="text-40!"><Check /></el-icon>
           <div class="mt-4">上传附件压缩包</div>
           <div class="text-2">（压缩包以“学校+专业+姓名”命名，大</div>
           <div class="text-2">小不可超过30MB，支持zip、rar格式）</div>

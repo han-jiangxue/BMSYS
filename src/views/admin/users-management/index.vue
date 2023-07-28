@@ -130,7 +130,13 @@ function getMaritalStatusLabel(taskStatus: any) {
 
 const handelReview = (idCardNumber: number, reviewStatus: number) => {
   const params = { idCardNumber, reviewStatus }
-  reviewAPI([params])
+  reviewAPI([params]).then((res: any) => {
+    if (res.code === 200) {
+      ElMessage.success(res.message)
+    }
+  })
+  getTableData()
+  getTableSearchData()
 }
 
 const getDetail = async (row: any) => {
@@ -183,6 +189,8 @@ const handleExportWord = async () => {
   })
   try {
     const response: any = await getExcelFileApi()
+    // console.log(response.headers["content-disposition"], "hh")
+
     saveAs(response, `汇总表.xlsx`)
     downloadLoadingInstance.close()
     ElMessage.success("文件下载完成")

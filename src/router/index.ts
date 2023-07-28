@@ -128,7 +128,7 @@ export const asyncRoutes: RouteRecordRaw[] = [
         component: () => import("@/views/user/submit-info/index.vue"),
         name: "submit-info",
         meta: {
-          title: "上传填写",
+          title: "上传填报",
           roles: ["user"],
           elIcon: "Upload"
         }

@@ -20,10 +20,10 @@ const settingsStore = useSettingsStore()
         <span>固定 Header</span>
         <el-switch v-model="settingsStore.fixedHeader" class="drawer-switch" />
       </div>
-      <div class="drawer-item">
+      <!-- <div class="drawer-item">
         <span>显示消息通知</span>
         <el-switch v-model="settingsStore.showNotify" class="drawer-switch" />
-      </div>
+      </div> -->
       <div class="drawer-item">
         <span>显示切换主题按钮</span>
         <el-switch v-model="settingsStore.showThemeSwitch" class="drawer-switch" />

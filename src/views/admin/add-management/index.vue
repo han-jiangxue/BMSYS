@@ -74,8 +74,8 @@ const resetSearch = () => {
 function getStatusLabel(taskStatus: any) {
   const statusMap: { [key: number]: string } = {
     1: "启动",
-    2: "已结束",
-    3: "实施中",
+    3: "已结束",
+    2: "实施中",
     4: "草稿"
   }
 

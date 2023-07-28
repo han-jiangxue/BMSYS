@@ -175,95 +175,119 @@ onMounted(async () => {
   <div class="app-container">
     <el-card v-if="isLoaded">
       <div class="p-5 overflow-x-auto">
-        <el-form :inline="true" :model="infoForm" label-position="left">
-          <el-form-item label="姓&emsp;&emsp;名">
-            <el-input disabled v-model="userInfo!.realName" placeholder="请输入姓名" clearable />
-          </el-form-item>
-          <el-form-item label="身份证号">
-            <el-input disabled v-model="userInfo!.idCardNumber" placeholder="请输入身份证号" clearable />
-          </el-form-item>
-          <el-form-item label="性&emsp;&emsp;别">
-            <el-select v-model="infoForm.gender" placeholder="请选择性别" clearable>
-              <el-option label="男" :value="1" />
-              <el-option label="女" :value="2" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="手机号码">
-            <el-input v-model="infoForm.phoneNumber" placeholder="请输入手机号码" clearable />
-          </el-form-item>
-          <el-form-item label="民&emsp;&emsp;族">
-            <el-input v-model="infoForm.nation" placeholder="请输入民族" clearable />
-          </el-form-item>
-          <el-form-item label="电子邮箱">
-            <el-input v-model="userInfo!.email" placeholder="请输入电子邮箱" clearable />
-          </el-form-item>
-          <el-form-item label="籍&emsp;&emsp;贯">
-            <el-cascader
-              v-model="infoForm.position"
-              placeholder="请选择籍贯"
-              clearable
-              :options="regionData as CascaderOption[]"
-            />
-          </el-form-item>
-          <el-form-item label="家庭住址">
-            <el-input v-model="infoForm.homeLocation" placeholder="请输入家庭住址" clearable />
-          </el-form-item>
-          <el-form-item label="现所在地">
-            <el-input v-model="infoForm.currentLocation" placeholder="请输入现所在地" clearable />
-          </el-form-item>
-          <el-form-item label="出生时间">
-            <el-date-picker v-model="infoForm.birthday" type="date" placeholder="请选择时间" />
-          </el-form-item>
-          <el-form-item label="婚姻状况">
-            <el-select v-model="infoForm.maritalStatus" placeholder="请选择婚姻状况" clearable>
-              <el-option label="未婚" :value="1" />
-              <el-option label="已婚" :value="2" />
-              <el-option label="离异" :value="3" />
-              <el-option label="丧偶" :value="4" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="政治面貌">
-            <el-select v-model="infoForm.politicalOutlook" placeholder="请选择政治面貌">
-              <el-option label="中共党员" :value="1" />
-              <el-option label="中共预备党员" :value="2" />
-              <el-option label="共青团员" :value="3" />
-              <el-option label="群众" :value="4" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="入党时间">
-            <el-date-picker v-model="infoForm.partyJoiningTime" type="date" placeholder="请选择时间" />
-          </el-form-item>
-          <el-form-item label="英语水平">
-            <el-select v-model="infoForm.englishProficiency" placeholder="请选择英语水平">
-              <el-option label="CET4" value="CET4" />
-              <el-option label="CET6" value="CET6" />
-              <el-option label="TEM4" value="TEM4" />
-              <el-option label="TEM8" value="4TEM8" />
-              <el-option label="IELTS" value="5IELTS" />
-              <el-option label="其他" value="其他" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="英语分数">
-            <el-input v-model.number="infoForm.englishScore" placeholder="请输入英语分数" clearable />
-          </el-form-item>
-          <el-form-item label="本科学校">
-            <el-input v-model="infoForm.undergraduateUniversity" placeholder="请输入本科就读学校" clearable />
-          </el-form-item>
-          <el-form-item label="本科专业">
-            <el-input v-model="infoForm.undergraduateMajor" placeholder="请输入本科就读专业" clearable />
-          </el-form-item>
-          <el-form-item label="硕士学校">
-            <el-input v-model="infoForm.masterUniversity" placeholder="请输入硕士就读学校" clearable />
-          </el-form-item>
-          <el-form-item label="硕士专业">
-            <el-input v-model="infoForm.masterMajor" placeholder="请输入硕士就读专业" clearable />
-          </el-form-item>
-          <el-form-item label="博士学校">
-            <el-input v-model="infoForm.phdUniversity" placeholder="请输入博士就读学校" clearable />
-          </el-form-item>
-          <el-form-item label="博士专业">
-            <el-input v-model="infoForm.phdMajor" placeholder="请输入博士就读专业" clearable />
-          </el-form-item>
+        <div class="w-full! flex justify-between">
+          <el-form :inline="true" :model="infoForm" label-position="left" class="w-1000px">
+            <el-form-item label="姓&emsp;&emsp;名">
+              <el-input disabled v-model="userInfo!.realName" placeholder="请输入姓名" clearable />
+            </el-form-item>
+            <el-form-item label="身份证号">
+              <el-input disabled v-model="userInfo!.idCardNumber" placeholder="请输入身份证号" clearable />
+            </el-form-item>
+            <el-form-item label="性&emsp;&emsp;别">
+              <el-select v-model="infoForm.gender" placeholder="请选择性别" clearable>
+                <el-option label="男" :value="1" />
+                <el-option label="女" :value="2" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="手机号码">
+              <el-input v-model="infoForm.phoneNumber" placeholder="请输入手机号码" clearable />
+            </el-form-item>
+            <el-form-item label="民&emsp;&emsp;族">
+              <el-input v-model="infoForm.nation" placeholder="请输入民族" clearable />
+            </el-form-item>
+            <el-form-item label="电子邮箱">
+              <el-input v-model="userInfo!.email" placeholder="请输入电子邮箱" clearable />
+            </el-form-item>
+            <el-form-item label="籍&emsp;&emsp;贯">
+              <el-cascader
+                v-model="infoForm.position"
+                placeholder="请选择籍贯"
+                clearable
+                :options="regionData as CascaderOption[]"
+              />
+            </el-form-item>
+            <el-form-item label="家庭住址">
+              <el-input v-model="infoForm.homeLocation" placeholder="请输入家庭住址" clearable />
+            </el-form-item>
+            <el-form-item label="现所在地">
+              <el-input v-model="infoForm.currentLocation" placeholder="请输入现所在地" clearable />
+            </el-form-item>
+            <el-form-item label="出生时间">
+              <el-date-picker v-model="infoForm.birthday" type="date" placeholder="请选择时间" />
+            </el-form-item>
+            <el-form-item label="婚姻状况">
+              <el-select v-model="infoForm.maritalStatus" placeholder="请选择婚姻状况" clearable>
+                <el-option label="未婚" :value="1" />
+                <el-option label="已婚" :value="2" />
+                <el-option label="离异" :value="3" />
+                <el-option label="丧偶" :value="4" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="政治面貌">
+              <el-select v-model="infoForm.politicalOutlook" placeholder="请选择政治面貌">
+                <el-option label="中共党员" :value="1" />
+                <el-option label="中共预备党员" :value="2" />
+                <el-option label="共青团员" :value="3" />
+                <el-option label="群众" :value="4" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="入党时间">
+              <el-date-picker v-model="infoForm.partyJoiningTime" type="date" placeholder="请选择时间" />
+            </el-form-item>
+            <el-form-item label="英语水平">
+              <el-select v-model="infoForm.englishProficiency" placeholder="请选择英语水平">
+                <el-option label="CET4" value="CET4" />
+                <el-option label="CET6" value="CET6" />
+                <el-option label="TEM4" value="TEM4" />
+                <el-option label="TEM8" value="4TEM8" />
+                <el-option label="IELTS" value="5IELTS" />
+                <el-option label="其他" value="其他" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="英语分数">
+              <el-input v-model.number="infoForm.englishScore" placeholder="请输入英语分数" clearable />
+            </el-form-item>
+            <el-form-item label="本科学校">
+              <el-input v-model="infoForm.undergraduateUniversity" placeholder="请输入本科就读学校" clearable />
+            </el-form-item>
+            <el-form-item label="本科专业">
+              <el-input v-model="infoForm.undergraduateMajor" placeholder="请输入本科就读专业" clearable />
+            </el-form-item>
+            <el-form-item label="硕士学校">
+              <el-input v-model="infoForm.masterUniversity" placeholder="请输入硕士就读学校" clearable />
+            </el-form-item>
+            <el-form-item label="硕士专业">
+              <el-input v-model="infoForm.masterMajor" placeholder="请输入硕士就读专业" clearable />
+            </el-form-item>
+            <el-form-item label="博士学校">
+              <el-input v-model="infoForm.phdUniversity" placeholder="请输入博士就读学校" clearable />
+            </el-form-item>
+            <el-form-item label="博士专业">
+              <el-input v-model="infoForm.phdMajor" placeholder="请输入博士就读专业" clearable />
+            </el-form-item>
+          </el-form>
+          <div class="w-220px">
+            <div class="flex w-100% justify-center flex-col items-center">
+              <el-upload
+                class="avatar-uploader"
+                :show-file-list="false"
+                :limit="1"
+                :action="picUrl"
+                :before-upload="handleBeforeUpload"
+                :on-success="handleSuccess"
+                :headers="{ token: token }"
+              >
+                <img v-if="fileList" :src="fileList" class="w-30" />
+                <el-icon class="text-40!" v-else><upload-filled /></el-icon>
+                <div class="mt-4">上传正面免冠证件照1张</div>
+                <div class="text-2">（1寸2.5*3.5cm，413*295像素，jpg格式</div>
+                <div class="text-2">上传时jpg文件命名为“姓名+证件照”）</div>
+              </el-upload>
+              <div class="mt-2">注意：请保存后再上传图片</div>
+            </div>
+          </div>
+        </div>
+        <el-form :inline="true" :model="infoForm" label-position="top">
           <el-form-item label="个人经历">
             <el-input
               v-model="infoForm.personalExperience"
@@ -275,8 +299,8 @@ onMounted(async () => {
 5.年月日-至今，省市大学学院专业，博士研究生。（换行）
 ……"
               type="textarea"
-              class="w-203!"
-              :rows="1"
+              class="w-140!"
+              :rows="8"
               clearable
             />
           </el-form-item>
@@ -289,8 +313,8 @@ onMounted(async () => {
 3.年月日-至今，担任大学学院班班长。（换行）
 ……"
               type="textarea"
-              class="w-151!"
-              :rows="1"
+              class="w-140!"
+              :rows="8"
               clearable
             />
           </el-form-item>
@@ -303,8 +327,8 @@ onMounted(async () => {
 2.年月**日，获……奖学金，颁奖单位：………………。（换行）
 ……"
               type="textarea"
-              class="w-176!"
-              :rows="1"
+              class="w-140!"
+              :rows="8"
               clearable
             />
           </el-form-item>
@@ -315,8 +339,8 @@ onMounted(async () => {
               placeholder="格式：1.年月**日，在……，因……原因，受到……处分。
 ……"
               type="textarea"
-              class="w-172!"
-              :rows="1"
+              class="w-140!"
+              :rows="8"
               clearable
             />
           </el-form-item>
@@ -329,13 +353,22 @@ onMounted(async () => {
 2.年月**日，发表……论文。（换行）
 ……"
               type="textarea"
-              class="w-197!"
-              :rows="1"
+              class="w-140!"
+              :rows="8"
               clearable
             />
           </el-form-item>
+          <el-form-item>
+            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleSubmit('submit')">保存</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleSubmit('update')">更新</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleExportWord">导出</el-button>
+          </el-form-item>
         </el-form>
-        <el-form :inline="true">
+        <!-- <el-form :inline="true">
           <el-form-item>
             <el-button type="primary" class="w-60" @click="handleSubmit('submit')">保存</el-button>
           </el-form-item>
@@ -348,7 +381,7 @@ onMounted(async () => {
           <el-form-item>
             <el-button type="primary" class="w-60" @click="handleExportWord">导出</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </div>
     </el-card>
 
@@ -373,7 +406,7 @@ onMounted(async () => {
         </span>
       </template>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       v-model="isDialogShow.addPicVisible"
       title="头像上传"
       width="30%"
@@ -401,7 +434,7 @@ onMounted(async () => {
           <div class="text-2">上传时jpg文件命名为“姓名+证件照”）</div>
         </el-upload>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
