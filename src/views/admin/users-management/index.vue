@@ -259,8 +259,6 @@ onMounted(async () => {
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
-        </el-form-item>
-        <el-form-item>
           <el-button type="primary" :icon="Download" @click="handleExportWord">导出Excel表</el-button>
         </el-form-item>
       </el-form>

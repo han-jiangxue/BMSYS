@@ -7,7 +7,8 @@ import {
   editNoticeAPI,
   getNoticeBasedTitleAPI,
   getGetAllNoticeAPI,
-  deleteNoticeAPI
+  deleteNoticeAPI,
+  deleteNoticeListAPI
 } from "@/api/admin/notice-management"
 import { usePagination } from "@/hooks/usePagination"
 import { formatDateTime } from "@/utils"
@@ -34,6 +35,7 @@ const formData = reactive({
   announcementId: ""
 })
 const formRef = ref<FormInstance | null>(null)
+const deleteArray = ref([])
 
 const getTableData = () => {
   if (isSearch.value) {
@@ -133,6 +135,10 @@ const resetSearch = () => {
   paginationData.currentPage = 1
 }
 
+const handleSelect = (data: any) => {
+  deleteArray.value = data.map((item: any) => item.announcementId)
+}
+
 function getStatusLabel(taskStatus: any) {
   const statusMap: { [key: number]: string } = {
     "0": "可见",
@@ -182,6 +188,19 @@ const handleDelete = (id: any) => {
   })
 }
 
+const handleDeleteNoticeLists = async () => {
+  if (deleteArray.value.length === 0) {
+    ElMessage.warning("请选择后再删除")
+    return
+  }
+  await deleteNoticeListAPI([...deleteArray.value]).then((res: any) => {
+    if (res.code === 200) {
+      ElMessage.success("删除成功")
+      getTableData()
+    }
+  })
+}
+
 /** 监听分页参数的变化 */
 watch(
   [() => paginationData.currentPage, () => paginationData.pageSize],
@@ -220,13 +239,23 @@ onMounted(() => {
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
           <el-button @click="handleCreateDialogVisible">新增公告</el-button>
+          <el-popconfirm
+            title="确认删除该记录吗？"
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            @confirm="handleDeleteNoticeLists"
+          >
+            <template #reference>
+              <el-button type="danger">批量删除</el-button>
+            </template>
+          </el-popconfirm>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card v-loading="loading">
       <div class="table-wrapper">
-        <el-table :data="tableData">
-          <el-table-column type="index" width="50" align="center" />
+        <el-table :data="tableData" @selection-change="handleSelect">
+          <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="title" label="标题" align="center" />
           <el-table-column prop="createDate" label="创建时间" align="center" />
           <el-table-column prop="modifyDate" label="更新时间" align="center" />

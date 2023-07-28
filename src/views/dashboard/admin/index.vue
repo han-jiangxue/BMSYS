@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-// import { ElDescriptions, ElDescriptionsItem } from "element-plus"
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import { ElNotification } from "element-plus"
 import { useUserStore } from "@/store/modules/user"
 import { getGetAllNoticeAPI } from "@/api/admin/notice-management"
+import { getAddTaskStatueAPI } from "@/api/admin/add-management"
 
 interface NoticeListType {
   announcementId: number
@@ -16,6 +17,11 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const NoticeList = ref<NoticeListType[]>()
+
+const settingStatue = ref({
+  addTaskSetting: undefined,
+  examTaskSetting: undefined
+})
 
 const handleSkip = (url: string) => {
   if (!userStore.roles.includes("user")) {
@@ -34,18 +40,28 @@ onMounted(async () => {
     size: 100
   })
   NoticeList.value = res.data.data.records
+  await getAddTaskStatueAPI().then((res: any) => {
+    settingStatue.value.addTaskSetting = res.data
+  })
+  ElNotification({
+    title: "设置状态",
+    dangerouslyUseHTMLString: true,
+    message: `<strong>填报管: <i>${
+      settingStatue.value?.addTaskSetting ? "已设置" : "未设置"
+    }</i></strong><br><strong>考试管理: <i>暂无数据</i></strong>`
+  })
 })
 </script>
 
 <template>
   <div class="app-container h-full">
     <el-card class="search-wrapper bg-#E0F0EF! h-full">
-      <div class="flex h-100 items-center justify-between">
-        <div class="w-50% h-full flex flex-col items-center justify-center">
+      <div class="flex h-65vh items-center justify-between">
+        <div class="w-50% h-full flex flex-col items-center justify-center text-5">
           <div class="flex justify-start items-center">
             <div class="flex justify-start items-center mb-18">
               <div
-                class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+                class="rounded-8 p-6 flex justify-center items-center w-40 h-40 m-4 bg-#4076B1 font-800"
                 @click="handleSkip('add-info')"
               >
                 信息填写
@@ -55,7 +71,7 @@ onMounted(async () => {
             </div>
             <div class="flex-col items-center justify-center flex">
               <div
-                class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+                class="rounded-8 p-6 flex justify-center items-center w-40 h-40 m-4 bg-#4076B1 font-800"
                 @click="handleSkip('submit-info')"
               >
                 上传填报
@@ -66,7 +82,7 @@ onMounted(async () => {
           </div>
           <div class="flex justify-start items-center">
             <div
-              class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+              class="rounded-8 p-6 flex justify-center items-center w-40 h-40 m-4 bg-#4076B1 font-800"
               @click="handleSkip('exam-confirm')"
             >
               考试确认
@@ -74,7 +90,7 @@ onMounted(async () => {
             <div class="triangle-left" />
             <div class="w-8 h-8 bg-#FFF" />
             <div
-              class="rounded-8 p-6 justify-center w-30 h-30 m-4 bg-#4076B1 font-800"
+              class="rounded-8 p-6 flex justify-center items-center w-40 h-40 m-4 bg-#4076B1 font-800"
               @click="handleSkip('result-search')"
             >
               结果查询
@@ -105,8 +121,8 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div class="w-full h-80 bg-#4076B1 px-4 py-12">
-        <div class="color-#FFF mb-4">意见反馈邮箱：fdycumt@163.com</div>
+      <div class="w-full h-80vh bg-#4682A9 px-4 py-6">
+        <div class="color-#FFF mb">意见反馈邮箱：fdycumt@163.com</div>
         <div class="color-#FFF">工作单位：中国矿业大学党委学生工作部</div>
       </div>
     </el-card>

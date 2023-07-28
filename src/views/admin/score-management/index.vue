@@ -8,7 +8,8 @@ import {
   getExamTaskAPI,
   deleteScoreAPI,
   addScoreAPI,
-  editScoreAPI
+  editScoreAPI,
+  deleteScoreListAPI
 } from "@/api/admin/score-management"
 import { usePagination } from "@/hooks/usePagination"
 // import { formatDateTime } from "@/utils"
@@ -33,6 +34,7 @@ const formData = reactive({
   achievementId: ""
 })
 const formRef = ref<FormInstance | null>(null)
+const deleteArray = ref([])
 
 const getTableData = () => {
   loading.value = true
@@ -60,6 +62,10 @@ const resetForm = () => {
   formData.idCardNumber = ""
   formData.realName = ""
   formData.score = ""
+}
+
+const handleSelect = (data: any) => {
+  deleteArray.value = data.map((item: any) => item.achievementId)
 }
 
 const handleUpdate = (row: any) => {
@@ -121,6 +127,19 @@ const handleDelete = (id: any) => {
       getTableData()
     } else {
       ElMessage.warning(res.message)
+    }
+  })
+}
+
+const handleDeleteScoreLists = async () => {
+  if (deleteArray.value.length === 0) {
+    ElMessage.warning("请选择后再删除")
+    return
+  }
+  await deleteScoreListAPI([...deleteArray.value]).then((res: any) => {
+    if (res.code === 200) {
+      ElMessage.success("删除成功")
+      getTableData()
     }
   })
 }
@@ -199,13 +218,23 @@ watch(
           <el-button @click="dialogVisible = true">新增</el-button>
           <el-button type="primary" @click="getTableData">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
+          <el-popconfirm
+            title="确认删除该记录吗？"
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            @confirm="handleDeleteScoreLists"
+          >
+            <template #reference>
+              <el-button type="danger">批量删除</el-button>
+            </template>
+          </el-popconfirm>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card v-loading="loading">
       <div class="table-wrapper">
-        <el-table :data="tableData">
-          <el-table-column type="index" width="50" align="center" />
+        <el-table :data="tableData" @selection-change="handleSelect">
+          <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="idCardNumber" label="身份证号" align="center" />
           <el-table-column prop="realName" label="姓名" align="center" />
           <el-table-column prop="score" label="成绩" align="center" />

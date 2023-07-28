@@ -8,12 +8,16 @@ enum Api {
   AddTask = "/task/addFillingTask",
   // 删除任务
   DelTask = "/task/deleteTask",
+  // 批量删除
+  DelTaskList = "/task/deleteTaskList",
   // 修改任务
   EditTask = "/task/updateTask",
   // 开启任务
   OpenTask = "/task/startTask",
   // 上传文件
-  AddFile = "/exam-info-stu/uploadWordFile"
+  AddFile = "/exam-info-stu/uploadWordFile",
+  // 获取任务状态
+  GetTaskStatue = "/task/hasTaskOpen"
 }
 
 export function getFillingTaskApi(params: any) {
@@ -29,6 +33,14 @@ export function deleteTaskApi(params: any) {
     url: Api.DelTask,
     method: "get",
     params
+  })
+}
+
+export function deleteTaskListAPI(data: any) {
+  return request({
+    url: Api.DelTaskList,
+    method: "post",
+    data
   })
 }
 
@@ -64,5 +76,12 @@ export function addFileAPI(data: any) {
       "Content-Type": "multipart/form-data"
     },
     data
+  })
+}
+
+export function getAddTaskStatueAPI() {
+  return request({
+    url: Api.GetTaskStatue,
+    method: "get"
   })
 }

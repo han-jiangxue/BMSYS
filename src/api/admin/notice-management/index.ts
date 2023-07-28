@@ -13,7 +13,9 @@ enum Api {
   // 获取全部公告
   GetAllNotice = "/announcement/manage/showall",
   // 删除公告
-  DeleteNotice = "/announcement/manage/delete"
+  DeleteNotice = "/announcement/manage/delete",
+  // 批量删除
+  DeleteNoticeList = "/announcement/manage/delete/lot"
 }
 
 export function getGetAllNoticeAPI(params: any) {
@@ -64,5 +66,13 @@ export function deleteNoticeAPI(id: number) {
   return request({
     url: `${Api.DeleteNotice}?id=${id}`,
     method: "post"
+  })
+}
+
+export function deleteNoticeListAPI(data: any) {
+  return request({
+    url: Api.DeleteNoticeList,
+    method: "post",
+    data
   })
 }

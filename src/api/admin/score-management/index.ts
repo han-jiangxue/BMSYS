@@ -13,7 +13,9 @@ enum Api {
   // 新增成绩
   AddScore = "/achievement/addScore",
   // 修改成绩
-  EditScore = "/achievement/updateScore"
+  EditScore = "/achievement/updateScore",
+  // 批量删除
+  DelScoreList = "/achievement/deleteScoreList"
 }
 
 export function getExamTaskAPI() {
@@ -36,6 +38,14 @@ export function deleteScoreAPI(params: any) {
     url: Api.DelScore,
     method: "get",
     params
+  })
+}
+
+export function deleteScoreListAPI(data: any) {
+  return request({
+    url: Api.DelScoreList,
+    method: "post",
+    data
   })
 }
 

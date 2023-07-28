@@ -7,7 +7,8 @@ import {
   deleteTaskApi,
   editTaskApi,
   openTaskApi,
-  addFileAPI
+  addFileAPI,
+  deleteTaskListAPI
 } from "@/api/admin/add-management"
 import { formatDateTime } from "@/utils"
 import { usePagination } from "@/hooks/usePagination"
@@ -38,6 +39,7 @@ const formRules: FormRules = reactive({
   endTime: [{ required: true, trigger: "blur", message: "请选择结束时间" }]
 })
 const formRef = ref<FormInstance | null>(null)
+const deleteArray = ref([])
 
 const getTableData = () => {
   loading.value = true
@@ -96,6 +98,10 @@ const reverseFormatDateTime = (timeString: string) => {
   return `${datePart} ${timePart}`
 }
 
+const handleSelect = (data: any) => {
+  deleteArray.value = data.map((item: any) => item.fillingTaskId)
+}
+
 async function open(id: string) {
   await openTaskApi({ taskId: id })
     .then((res: any) => {
@@ -124,6 +130,19 @@ async function handleDelete(taskId: string) {
     .catch((err) => {
       console.error(err)
     })
+}
+
+const handleDeleteTaskLists = async () => {
+  if (deleteArray.value.length === 0) {
+    ElMessage.warning("请选择后再删除")
+    return
+  }
+  await deleteTaskListAPI([...deleteArray.value]).then((res: any) => {
+    if (res.code === 200) {
+      ElMessage.success("删除成功")
+      getTableData()
+    }
+  })
 }
 
 const resetForm = () => {
@@ -221,12 +240,22 @@ onMounted(() => {
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button @click="resetSearch">重置</el-button>
           <el-button @click="dialogVisible = true">新增填报任务</el-button>
+          <el-popconfirm
+            title="确认删除该记录吗？"
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            @confirm="handleDeleteTaskLists"
+          >
+            <template #reference>
+              <el-button type="danger">批量删除</el-button>
+            </template>
+          </el-popconfirm>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card v-loading="loading">
       <div class="table-wrapper">
-        <el-table :data="tableData">
+        <el-table :data="tableData" @selection-change="handleSelect">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="task" label="任务名称" align="center" />
           <el-table-column prop="startTime" label="开始时间" align="center">
@@ -245,7 +274,11 @@ onMounted(() => {
             </template>
           </el-table-column>
 
-          <el-table-column prop="createTime" label="创建时间" align="center" />
+          <el-table-column prop="createTime" label="创建时间" align="center">
+            <template #default="scope">
+              {{ reverseFormatDateTime(scope.row.createTime) }}
+            </template>
+          </el-table-column>
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template #default="scope">
               <el-popconfirm

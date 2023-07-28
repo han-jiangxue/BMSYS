@@ -359,13 +359,13 @@ onMounted(async () => {
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleSubmit('submit')">保存</el-button>
+            <el-button type="primary" class="mt-24 mx-8" @click="handleSubmit('submit')">保存填写</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleSubmit('update')">更新</el-button>
+            <el-button type="primary" class="mt-24 mx-8" @click="handleSubmit('update')">更新填写</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="w-33 mt-24 mx-4" @click="handleExportWord">导出</el-button>
+            <el-button type="primary" class="mt-24 mx-8" @click="handleExportWord">导出文档</el-button>
           </el-form-item>
         </el-form>
         <!-- <el-form :inline="true">
