@@ -113,9 +113,11 @@ onMounted(async () => {
                   <div class="color-red" v-show="addTask?.startTime">截至时间：{{ addTask?.endTime.slice(0, 10) }}</div>
                 </div>
               </div>
-              <div class="w-8 h-8 bg-#FFF text-3 flex items-center justify-center z-8">
+              <div class="w-10 h-10 bg-#FFF text-1 flex items-center justify-center z-8">
                 <div v-show="registerStatue?.reviewStatus === 3" class="color-green font-600 mt-8">通过</div>
+                <div v-show="registerStatue?.reviewStatus === 1" class="color-black font-600 mt-8">待审核</div>
                 <div v-show="registerStatue?.reviewStatus === 2" class="color-red font-600 mt-8">未通过</div>
+                <div v-show="registerStatue?.reviewStatus === 4" class="color-red font-600 mt-8">已退回</div>
               </div>
               <div class="triangle-down" />
             </div>

@@ -169,7 +169,7 @@ function startImageTransition() {
             <el-form-item prop="code">
               <el-input
                 v-model.trim="loginForm.code"
-                placeholder="验证码"
+                placeholder="验证码（注意区分大小写）"
                 type="text"
                 tabindex="3"
                 :prefix-icon="Key"

@@ -5,7 +5,7 @@ enum Api {
   // 获取信息
   GetInfo = "/info/get",
   // 信息填报
-  AddInfo = "/info/submit",
+  AddInfo = "/info/save",
   // 更新填报
   UpdateInfo = "/info/update",
   // 获取图片
